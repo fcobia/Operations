@@ -11,7 +11,7 @@ import Foundation
 /**
 The error type used to indicate failure.
 */
-public enum NegatedConditionError: ErrorProtocol, Equatable {
+public enum NegatedConditionError: Error, Equatable {
 
     /**
     When the nested condition succeeds, the negated condition fails.

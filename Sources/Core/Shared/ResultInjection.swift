@@ -88,7 +88,7 @@ extension InjectionOperationType where Self: Procedure {
      - returns: `self` - so that injections can be chained together.
     */
     @discardableResult
-    public func injectResultFromDependency<T where T: Procedure>(_ dep: T, block: (operation: Self, dependency: T, errors: [ErrorProtocol]) -> Void) -> Self {
+    public func injectResultFromDependency<T where T: Procedure>(_ dep: T, block: (operation: Self, dependency: T, errors: [Error]) -> Void) -> Self {
         dep.addObserver(WillFinishObserver { [weak self] op, errors in
             if let strongSelf = self, let dep = op as? T {
                 block(operation: strongSelf, dependency: dep, errors: errors)
@@ -138,8 +138,8 @@ public protocol AutomaticInjectionOperationType: InjectionOperationType {
  The only case indicates this, and composes the errors the
  dependency finished with.
 */
-public enum AutomaticInjectionError: ErrorProtocol {
-    case dependencyFinishedWithErrors([ErrorProtocol])
+public enum AutomaticInjectionError: Error {
+    case dependencyFinishedWithErrors([Error])
     case requirementNotSatisfied
 }
 
@@ -226,7 +226,7 @@ public protocol Executor: ResultOperationType, AutomaticInjectionOperationType {
 
      - parameter finish: a closure which receives an ErrorType?
     */
-    func execute(_ finish: (ErrorProtocol?) -> Void)
+    func execute(_ finish: (Error?) -> Void)
 
     /// Will be called to signal that the _work_ should be cancelled.
     func cancel()

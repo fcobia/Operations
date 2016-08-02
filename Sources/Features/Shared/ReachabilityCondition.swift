@@ -15,7 +15,7 @@ attached to is asked about its readiness.
 */
 public class ReachabilityCondition: Condition {
 
-    public enum Error: ErrorProtocol, Equatable {
+    public enum Error: Swift.Error, Equatable {
         case notReachable
         case notReachableWithConnectivity(Reachability.Connectivity)
     }

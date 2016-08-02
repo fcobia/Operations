@@ -25,7 +25,7 @@ public class NetworkObserver: OperationWillExecuteObserver, OperationDidFinishOb
 
     /// Initializer takes no parameters.
     public convenience init() {
-        self.init(indicator: UIApplication.shared())
+        self.init(indicator: UIApplication.shared)
     }
 
     init(indicator: NetworkActivityIndicatorInterface) {
@@ -41,7 +41,7 @@ public class NetworkObserver: OperationWillExecuteObserver, OperationDidFinishOb
     }
 
     /// Conforms to `OperationObserver`, will stop the network activity indicator.
-    public func didFinishOperation(_ operation: Procedure, errors: [ErrorProtocol]) {
+    public func didFinishOperation(_ operation: Procedure, errors: [Error]) {
         Queue.main.queue.async {
             NetworkIndicatorController.sharedInstance.networkActivityIndicator = self.networkActivityIndicator
             NetworkIndicatorController.sharedInstance.networkActivityDidEnd()
@@ -56,7 +56,7 @@ private class NetworkIndicatorController {
     private var activityCount = 0
     private var visibilityTimer: Timer?
 
-    var networkActivityIndicator: NetworkActivityIndicatorInterface = UIApplication.shared()
+    var networkActivityIndicator: NetworkActivityIndicatorInterface = UIApplication.shared
 
     private init() {
         // Prevents use outside of the shared instance.
@@ -100,7 +100,7 @@ private struct Timer {
 
     init(interval: TimeInterval, handler: () -> ()) {
         let after = DispatchTime.now() + interval
-        Queue.main.queue.after(when: after) { [isCancelled] in
+        Queue.main.queue.asyncAfter(deadline: after) { [isCancelled] in
             if isCancelled != true {
                 handler()
             }

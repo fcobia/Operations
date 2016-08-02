@@ -26,7 +26,7 @@ public class URLSessionTaskOperation: Procedure {
     public let task: URLSessionTask
 
     private var removedObserved = false
-    private let lock = Foundation.Lock()
+    private let lock = Foundation.NSLock()
 
     public init(task: URLSessionTask) {
         assert(task.state == .suspended, "NSURLSessionTask must be suspended, not \(task.state)")

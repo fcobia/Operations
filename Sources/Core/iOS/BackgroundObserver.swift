@@ -36,7 +36,7 @@ public class BackgroundObserver: NSObject {
 
     /// Initialize a `BackgroundObserver`, takes no parameters.
     public override convenience init() {
-        self.init(app: UIApplication.shared())
+        self.init(app: UIApplication.shared)
     }
 
     init(app: BackgroundTaskApplicationInterface) {
@@ -88,7 +88,7 @@ public class BackgroundObserver: NSObject {
 extension BackgroundObserver: OperationDidFinishObserver {
 
     /// Conforms to `OperationDidFinishObserver`, will end any background task that has been started.
-    public func didFinishOperation(_ operation: Procedure, errors: [ErrorProtocol]) {
+    public func didFinishOperation(_ operation: Procedure, errors: [Error]) {
         endBackgroundTask()
     }
 }

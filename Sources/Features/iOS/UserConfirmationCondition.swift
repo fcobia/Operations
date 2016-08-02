@@ -14,7 +14,7 @@ enum UserConfirmationResult {
     case cancelled
 }
 
-enum UserConfirmationError: ErrorProtocol {
+enum UserConfirmationError: Error {
     case confirmationUnknown
     case confirmationCancelled
 }
@@ -30,7 +30,7 @@ public class UserConfirmationCondition<From: PresentingViewController>: Conditio
     private let cancelAction: String
     private var alert: AlertOperation<From>
     private var confirmation: UserConfirmationResult = .unknown
-    private var alertOperationErrors = [ErrorProtocol]()
+    private var alertOperationErrors = [Error]()
 
     public init(title: String, message: String? = .none, action: String, isDestructive: Bool = true, cancelAction: String = NSLocalizedString("Cancel", comment: "Cancel"), presentConfirmationFrom from: From) {
         self.action = action

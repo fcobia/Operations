@@ -35,8 +35,8 @@ public class OpenInSafariOperation<From: PresentingViewController>: GroupOperati
     /// A flag that determines whether the `SFSafariViewController` should open the `URL` in reader mode or not.
     public var entersReaderIfAvailable: Bool
 
-    internal var shouldOpenInSafariViewController: () -> Bool = { UIApplication.shared().isFullscreenPresentation }
-    internal var openURL: (Foundation.URL) -> Void = { UIApplication.shared().openURL($0) }
+    internal var shouldOpenInSafariViewController: () -> Bool = { UIApplication.shared.isFullscreenPresentation }
+    internal var openURL: (Foundation.URL) -> Void = { UIApplication.shared.openURL($0) }
 
     /// The presenting `ViewControllerDisplayStyle`
     private let displayControllerFrom: ViewControllerDisplayStyle<From>

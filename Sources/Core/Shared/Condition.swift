@@ -23,7 +23,7 @@ internal extension ConditionType {
 }
 
 /// General Errors used by conditions
-public enum ConditionError: ErrorProtocol, Equatable {
+public enum ConditionError: Error, Equatable {
 
     /// A FalseCondition may use this as the error
     case falseCondition

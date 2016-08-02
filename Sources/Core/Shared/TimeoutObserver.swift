@@ -37,7 +37,7 @@ public struct TimeoutObserver: OperationWillExecuteObserver {
     public func willExecuteOperation(_ operation: Procedure) {
         let when = DispatchTime.now() + Double(Int64(timeout * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
 
-        Queue.default.queue.after(when: when) {
+        Queue.default.queue.asyncAfter(deadline: when) {
             if !operation.isFinished && !operation.isCancelled {
                 let error = OperationError.operationTimedOut(self.timeout)
                 operation.cancelWithError(error)

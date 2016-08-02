@@ -31,7 +31,7 @@ public protocol OperationQueueDelegate: class {
     - parameter operation: the `NSOperation` instance which finished.
     - parameter errors: an array of `ErrorType`s.
     */
-    func operationQueue(_ queue: ProcedureQueue, willFinishOperation operation: Operation, withErrors errors: [ErrorProtocol])
+    func operationQueue(_ queue: ProcedureQueue, willFinishOperation operation: Operation, withErrors errors: [Error])
 
     /**
      An operation has finished on the queue.
@@ -40,7 +40,7 @@ public protocol OperationQueueDelegate: class {
      - parameter operation: the `NSOperation` instance which finished.
      - parameter errors: an array of `ErrorType`s.
      */
-    func operationQueue(_ queue: ProcedureQueue, didFinishOperation operation: Operation, withErrors errors: [ErrorProtocol])
+    func operationQueue(_ queue: ProcedureQueue, didFinishOperation operation: Operation, withErrors errors: [Error])
 
     /**
      The operation queue will add a new operation via produceOperation().

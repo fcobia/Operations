@@ -255,7 +255,7 @@ extension OperationProfiler: OperationDidCancelObserver {
 
 extension OperationProfiler: OperationDidFinishObserver {
 
-    public func didFinishOperation(_ operation: Procedure, errors: [ErrorProtocol]) {
+    public func didFinishOperation(_ operation: Procedure, errors: [Error]) {
         addMetricNow(forEvent: .finished)
     }
 }

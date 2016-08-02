@@ -19,12 +19,12 @@ public enum ConditionResult {
     case satisfied
 
     /// Indicates that the condition failed with an associated error.
-    case failed(ErrorProtocol)
+    case failed(Error)
 }
 
 internal extension ConditionResult {
 
-    var error: ErrorProtocol? {
+    var error: Error? {
         switch self {
         case .failed(let error):
             return error
@@ -88,7 +88,7 @@ public protocol OperationCondition {
     func evaluateForOperation(_ operation: Procedure, completion: (OperationConditionResult) -> Void)
 }
 
-internal func evaluateOperationConditions(_ conditions: [OperationCondition], operation: Procedure, completion: ([ErrorProtocol]) -> Void) {
+internal func evaluateOperationConditions(_ conditions: [OperationCondition], operation: Procedure, completion: ([Error]) -> Void) {
 
     let group = DispatchGroup()
 
@@ -104,7 +104,7 @@ internal func evaluateOperationConditions(_ conditions: [OperationCondition], op
 
     group.notify(queue: Queue.default.queue) {
 
-        var failures: [ErrorProtocol] = results.flatMap { $0?.error }
+        var failures: [Error] = results.flatMap { $0?.error }
 
         if operation.isCancelled {
             failures.append(OperationError.conditionFailed)

@@ -80,7 +80,7 @@ extension Protector where T: RangeReplaceableCollection {
 }
 
 public func dispatch_sync(queue: DispatchQueue, _ block: () throws -> Void) rethrows {
-    var failure: ErrorProtocol? = .none
+    var failure: Error? = .none
 
     let catcher = {
         do {

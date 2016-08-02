@@ -12,7 +12,7 @@ import Foundation
 public protocol AssociatedErrorType {
 
     /// The type of associated error
-    associatedtype Error: ErrorProtocol
+    associatedtype Error: Swift.Error
 }
 
 /**
@@ -27,10 +27,10 @@ public struct RetryFailureInfo<T: Operation> {
     public let operation: T
 
     /// - returns: the errors the operation finished with.
-    public let errors: [ErrorProtocol]
+    public let errors: [Error]
 
     /// - returns: the previous errors of previous attempts
-    public let historicalErrors: [ErrorProtocol]
+    public let historicalErrors: [Error]
 
     /// - returns: the number of attempts made so far
     public let count: Int
@@ -183,7 +183,7 @@ public class RetryOperation<T: Operation>: RepeatedOperation<T> {
      Sets up the retry info object (used by the RetryGenerator), then
      calls the super implementation, returning true.
      */
-    public override func willAttemptRecoveryFromErrors(_ errors: [ErrorProtocol], inOperation operation: Operation) -> Bool {
+    public override func willAttemptRecoveryFromErrors(_ errors: [Error], inOperation operation: Operation) -> Bool {
         var returnValue = false
         defer {
             let message = returnValue ? "will attempt" : "will not attempt"
@@ -203,7 +203,7 @@ public class RetryOperation<T: Operation>: RepeatedOperation<T> {
         // no-op
     }
 
-    internal func createFailureInfo(_ operation: T, errors: [ErrorProtocol]) -> RetryFailureInfo<T> {
+    internal func createFailureInfo(_ operation: T, errors: [Error]) -> RetryFailureInfo<T> {
         return RetryFailureInfo(
             operation: operation,
             errors: errors,
@@ -215,14 +215,14 @@ public class RetryOperation<T: Operation>: RepeatedOperation<T> {
         )
     }
 
-    internal override func child(_ child: Operation, didAttemptRecoveryFromErrors errors: [ErrorProtocol]) {
+    internal override func child(_ child: Operation, didAttemptRecoveryFromErrors errors: [Error]) {
         if let previous = previous, child === current {
             didNotRecoverFromOperationErrors(previous)
         }
         super.child(child, didAttemptRecoveryFromErrors: errors)
     }
 
-    public override func operationQueue(_ queue: ProcedureQueue, willFinishOperation operation: Operation, withErrors errors: [ErrorProtocol]) {
+    public override func operationQueue(_ queue: ProcedureQueue, willFinishOperation operation: Operation, withErrors errors: [Error]) {
         if errors.isEmpty, let previous = previous, operation === current {
             didRecoverFromOperationErrors(previous)
         }

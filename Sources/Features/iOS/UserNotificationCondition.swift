@@ -20,7 +20,7 @@ extension UIApplication: UserNotificationRegistrarType {
     }
 
     public func opr_currentUserNotificationSettings() -> UIUserNotificationSettings? {
-        return currentUserNotificationSettings() ?? .none
+        return currentUserNotificationSettings ?? .none
     }
 }
 
@@ -53,7 +53,7 @@ public final class UserNotificationCondition: Condition {
         case replace
     }
 
-    public enum Error: ErrorProtocol, Equatable {
+    public enum Error: Swift.Error, Equatable {
         public typealias UserSettingsPair = (current: UIUserNotificationSettings?, desired: UIUserNotificationSettings)
         case settingsNotSufficient(UserSettingsPair)
     }
@@ -68,7 +68,7 @@ public final class UserNotificationCondition: Condition {
     let registrar: UserNotificationRegistrarType
 
     public convenience init(settings: UIUserNotificationSettings, behavior: Behavior = .merge) {
-        self.init(settings: settings, behavior: behavior, registrar: UIApplication.shared())
+        self.init(settings: settings, behavior: behavior, registrar: UIApplication.shared)
     }
 
     init(settings: UIUserNotificationSettings, behavior: Behavior = .merge, registrar: UserNotificationRegistrarType) {
@@ -124,7 +124,7 @@ public class UserNotificationPermissionOperation: Procedure {
     let registrar: UserNotificationRegistrarType
 
     public convenience init(settings: UIUserNotificationSettings, behavior: UserNotificationCondition.Behavior = .merge) {
-        self.init(settings: settings, behavior: behavior, registrar: UIApplication.shared())
+        self.init(settings: settings, behavior: behavior, registrar: UIApplication.shared)
     }
 
     init(settings: UIUserNotificationSettings, behavior: UserNotificationCondition.Behavior = .merge, registrar: UserNotificationRegistrarType) {
@@ -192,7 +192,8 @@ extension UIUserNotificationSettings {
     }
 }
 
-extension UIUserNotificationType: Boolean {
+// Frank
+extension UIUserNotificationType {
 
     public var boolValue: Bool {
         return self != []

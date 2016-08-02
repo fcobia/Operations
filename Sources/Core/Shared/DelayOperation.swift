@@ -58,7 +58,7 @@ public class DelayOperation: Procedure {
     internal init(delay: Delay, leeway: Int = 1_000_000) {
         self.delay = delay
         self.leeway = .nanoseconds(leeway)
-        let _timer = DispatchSource.timer(flags: DispatchSource.TimerFlags(rawValue: UInt(0)), queue: Queue.default.queue)
+        let _timer = DispatchSource.makeTimerSource(flags: DispatchSource.TimerFlags(rawValue: UInt(0)), queue: Queue.default.queue)
         self.timer = _timer
         super.init()
         name = "Delay \(delay)"

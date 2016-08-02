@@ -20,7 +20,7 @@ extension UIApplication: RemoteNotificationRegistrarType {
 
 public class RemoteNotificationCondition: Condition {
 
-    public enum Error: ErrorProtocol {
+    public enum Error: Swift.Error {
         case receivedError(NSError)
     }
 
@@ -36,7 +36,7 @@ public class RemoteNotificationCondition: Condition {
             .post(name: Notification.Name(rawValue: RemoteNotificationName), object: nil, userInfo: [RemoteNotificationErrorKey: error])
     }
 
-    internal var registrar: RemoteNotificationRegistrarType = UIApplication.shared() {
+    internal var registrar: RemoteNotificationRegistrarType = UIApplication.shared {
         didSet {
             removeDependencies()
             addDependency(RemoteNotificationsRegistration(registrar: registrar) { _ in })
@@ -89,7 +89,7 @@ public class RemoteNotificationsRegistration: Procedure {
     let handler: (RegistrationResult) -> Void
 
     public convenience init(handler: (RegistrationResult) -> Void) {
-        self.init(registrar: UIApplication.shared(), handler: handler)
+        self.init(registrar: UIApplication.shared, handler: handler)
     }
 
     public init(registrar: RemoteNotificationRegistrarType, handler: (RegistrationResult) -> Void) {

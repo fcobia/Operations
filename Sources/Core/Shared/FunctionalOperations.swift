@@ -188,7 +188,7 @@ public class ReduceOperation<Element, U>: ResultOperation<U>, AutomaticInjection
     }
 
     public final override func execute() {
-        result = requirement.reduce(initial, combine: combine)
+        result = requirement.reduce(initial, combine)
         finish()
     }
 }

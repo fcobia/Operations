@@ -51,7 +51,7 @@ public typealias StartedObserver = WillExecuteObserver
  closure when the operation cancels.
  */
 public struct WillCancelObserver: OperationWillCancelObserver {
-    public typealias BlockType = (operation: Procedure, errors: [ErrorProtocol]) -> Void
+    public typealias BlockType = (operation: Procedure, errors: [Error]) -> Void
 
     private let block: BlockType
 
@@ -69,7 +69,7 @@ public struct WillCancelObserver: OperationWillCancelObserver {
     }
 
     /// Conforms to `OperationWillCancelObserver`, executes the block
-    public func willCancelOperation(_ operation: Procedure, errors: [ErrorProtocol]) {
+    public func willCancelOperation(_ operation: Procedure, errors: [Error]) {
         block(operation: operation, errors: errors)
     }
 
@@ -156,7 +156,7 @@ public struct ProducedOperationObserver: OperationDidProduceOperationObserver {
  closure when the operation is about to finish.
  */
 public struct WillFinishObserver: OperationWillFinishObserver {
-    public typealias BlockType = (operation: Procedure, errors: [ErrorProtocol]) -> Void
+    public typealias BlockType = (operation: Procedure, errors: [Error]) -> Void
 
     private let block: BlockType
 
@@ -174,7 +174,7 @@ public struct WillFinishObserver: OperationWillFinishObserver {
     }
 
     /// Conforms to `OperationWillFinishObserver`, executes the block
-    public func willFinishOperation(_ operation: Procedure, errors: [ErrorProtocol]) {
+    public func willFinishOperation(_ operation: Procedure, errors: [Error]) {
         block(operation: operation, errors: errors)
     }
 
@@ -190,7 +190,7 @@ public struct WillFinishObserver: OperationWillFinishObserver {
  closure when the operation did just finish.
  */
 public struct DidFinishObserver: OperationDidFinishObserver {
-    public typealias BlockType = (operation: Procedure, errors: [ErrorProtocol]) -> Void
+    public typealias BlockType = (operation: Procedure, errors: [Error]) -> Void
 
     private let block: BlockType
 
@@ -208,7 +208,7 @@ public struct DidFinishObserver: OperationDidFinishObserver {
     }
 
     /// Conforms to `OperationDidFinishObserver`, executes the block
-    public func didFinishOperation(_ operation: Procedure, errors: [ErrorProtocol]) {
+    public func didFinishOperation(_ operation: Procedure, errors: [Error]) {
         block(operation: operation, errors: errors)
     }
 
@@ -269,7 +269,7 @@ public struct BlockObserver: OperationObserver {
     }
 
     /// Conforms to `OperationWillCancelObserver`
-    public func willCancelOperation(_ operation: Procedure, errors: [ErrorProtocol]) {
+    public func willCancelOperation(_ operation: Procedure, errors: [Error]) {
         willCancel?.willCancelOperation(operation, errors: errors)
     }
 
@@ -284,12 +284,12 @@ public struct BlockObserver: OperationObserver {
     }
 
     /// Conforms to `OperationWillFinishObserver`
-    public func willFinishOperation(_ operation: Procedure, errors: [ErrorProtocol]) {
+    public func willFinishOperation(_ operation: Procedure, errors: [Error]) {
         willFinish?.willFinishOperation(operation, errors: errors)
     }
 
     /// Conforms to `OperationDidFinishObserver`
-    public func didFinishOperation(_ operation: Procedure, errors: [ErrorProtocol]) {
+    public func didFinishOperation(_ operation: Procedure, errors: [Error]) {
         didFinish?.didFinishOperation(operation, errors: errors)
     }
 

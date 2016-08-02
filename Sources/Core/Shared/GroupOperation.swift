@@ -23,18 +23,18 @@ operations.
 */
 public class GroupOperation: Procedure, OperationQueueDelegate {
 
-    typealias ErrorsByOperation = [Operation: [ErrorProtocol]]
+    typealias ErrorsByOperation = [Operation: [Error]]
     internal struct Errors {
-        var fatal = Array<ErrorProtocol>()
+        var fatal = Array<Error>()
         var attemptedRecovery: ErrorsByOperation = [:]
 
-        var previousAttempts: [ErrorProtocol] {
+        var previousAttempts: [Error] {
             return Array(attemptedRecovery.values.flatten())
         }
 
-        var all: [ErrorProtocol] {
+        var all: [Error] {
             get {
-                var tmp: [ErrorProtocol] = fatal
+                var tmp: [Error] = fatal
                 tmp.append(contentsOf: previousAttempts)
                 return tmp
             }
@@ -45,7 +45,7 @@ public class GroupOperation: Procedure, OperationQueueDelegate {
     private var protectedErrors = Protector(Errors())
     private var canFinishOperation: GroupOperation.CanFinishOperation!
     private var isGroupFinishing = false
-    private let groupFinishLock = RecursiveLock()
+    private let groupFinishLock = NSRecursiveLock()
     private var isAddingOperationsGroup = DispatchGroup()
 
     /// - returns: the ProcedureQueue the group runs operations on.
@@ -208,7 +208,7 @@ public class GroupOperation: Procedure, OperationQueueDelegate {
      - parameter operation: the child operation which is finishing
      - returns: a Boolean, return true if the errors were handled, else return false.
      */
-    public func willAttemptRecoveryFromErrors(_ errors: [ErrorProtocol], inOperation operation: Operation) -> Bool {
+    public func willAttemptRecoveryFromErrors(_ errors: [Error], inOperation operation: Operation) -> Bool {
         return false
     }
 
@@ -222,16 +222,16 @@ public class GroupOperation: Procedure, OperationQueueDelegate {
     }
 
     @available(*, unavailable, message: "Refactor your GroupOperation subclass as this method is no longer used.\n Override willFinishOperation(_: NSOperation) to manage scheduling of child operations. Override willAttemptRecoveryFromErrors(_: [ErrorType], inOperation: NSOperation) to do error handling. See code documentation for more details.")
-    public func willFinishOperation(_ operation: Operation, withErrors errors: [ErrorProtocol]) { }
+    public func willFinishOperation(_ operation: Operation, withErrors errors: [Error]) { }
 
     @available(*, unavailable, renamed: "willFinishOperation")
-    public func operationDidFinish(_ operation: Operation, withErrors errors: [ErrorProtocol]) { }
+    public func operationDidFinish(_ operation: Operation, withErrors errors: [Error]) { }
 
-    internal func child(_ child: Operation, didEncounterFatalErrors errors: [ErrorProtocol]) {
+    internal func child(_ child: Operation, didEncounterFatalErrors errors: [Error]) {
         addFatalErrors(errors)
     }
 
-    internal func child(_ child: Operation, didAttemptRecoveryFromErrors errors: [ErrorProtocol]) {
+    internal func child(_ child: Operation, didAttemptRecoveryFromErrors errors: [Error]) {
         protectedErrors.write { (tmp: inout Errors) in
             tmp.attemptedRecovery[child] = errors
         }
@@ -281,7 +281,7 @@ public class GroupOperation: Procedure, OperationQueueDelegate {
      operation is the finishing operation, we finish the group operation here. Else, the group is
      notified (using `operationDidFinish` that a child operation has finished.
      */
-    public func operationQueue(_ queue: ProcedureQueue, willFinishOperation operation: Operation, withErrors errors: [ErrorProtocol]) {
+    public func operationQueue(_ queue: ProcedureQueue, willFinishOperation operation: Operation, withErrors errors: [Error]) {
         guard queue === self.queue else { return }
 
         if !errors.isEmpty {
@@ -297,11 +297,12 @@ public class GroupOperation: Procedure, OperationQueueDelegate {
         }
     }
 
-    public func operationQueue(_ queue: ProcedureQueue, didFinishOperation operation: Operation, withErrors errors: [ErrorProtocol]) {
+    public func operationQueue(_ queue: ProcedureQueue, didFinishOperation operation: Operation, withErrors errors: [Error]) {
         guard queue === self.queue else { return }
 
         if operation === finishingOperation {
-            finish(fatalErrors)
+			finish(internalErrors.fatal)
+//            finish(fatalErrors)
             queue.isSuspended = true
         }
     }
@@ -342,15 +343,21 @@ public extension GroupOperation {
     }
 
     /// - returns: the errors which could not be recovered from
-    var fatalErrors: [ErrorProtocol] {
-        return internalErrors.fatal
+    var fatalErrors: [Error] {
+		let x = internalErrors.fatal
+		print(x)
+		print(x.dynamicType)
+		print(x.count)
+		print(x.first)
+		return x
+//        return internalErrors.fatal
     }
 
     /**
      Appends a fatal error.
      - parameter error: an ErrorType
     */
-    final func addFatalError(_ error: ErrorProtocol) {
+    final func addFatalError(_ error: Error) {
         addFatalErrors([error])
     }
 
@@ -358,7 +365,7 @@ public extension GroupOperation {
      Appends an array of fatal errors.
      - parameter errors: an [ErrorType]
      */
-    final func addFatalErrors(_ errors: [ErrorProtocol]) {
+    final func addFatalErrors(_ errors: [Error]) {
         protectedErrors.write { (tmp: inout Errors) in
             tmp.fatal.append(contentsOf: errors)
         }
@@ -386,12 +393,12 @@ public extension GroupOperation {
 public extension GroupOperation {
 
     @available(*, unavailable, renamed: "fatalErrors")
-    var aggregateErrors: [ErrorProtocol] {
+    var aggregateErrors: [Error] {
         return fatalErrors
     }
 
     @available(*, unavailable, renamed: "addFatalError")
-    final func aggregateError(_ error: ErrorProtocol) {
+    final func aggregateError(_ error: Error) {
         addFatalError(error)
     }
 }
@@ -495,7 +502,7 @@ private extension GroupOperation {
                 let isWaiting = parent.groupFinishLock.withCriticalScope { () -> Bool in
 
                     // Is anything currently adding operations?
-                    guard parent.isAddingOperationsGroup.wait(timeout: .now()) == .Success else {
+                    guard parent.isAddingOperationsGroup.wait(timeout: .now()) == .success else {
                         // Operations are actively being added to the group
                         // Wait for this to complete before proceeding.
                         //

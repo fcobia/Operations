@@ -44,7 +44,7 @@ internal extension CLLocationManager {
     }
 }
 
-public enum LocationOperationError: ErrorProtocol, Equatable {
+public enum LocationOperationError: Error, Equatable {
     case locationManagerDidFail(NSError)
     case geocoderError(NSError)
 }

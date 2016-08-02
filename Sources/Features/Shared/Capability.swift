@@ -236,7 +236,7 @@ public class Authorize<Capability: CapabilityType>: GetAuthorizationStatus<Capab
 /**
  An generic ErrorType used by the AuthorizedFor condition.
 */
-public enum CapabilityError<Capability: CapabilityType>: ErrorProtocol {
+public enum CapabilityError<Capability: CapabilityType>: Error {
 
     /// If the capability is not available
     case notAvailable

@@ -58,7 +58,7 @@ public struct LoggingObserver: OperationObserver {
 
      - parameter operation: the `Procedure` which has started.
      */
-    public func willCancelOperation(_ operation: Procedure, errors: [ErrorProtocol]) {
+    public func willCancelOperation(_ operation: Procedure, errors: [Error]) {
         let detail = errors.count > 0 ? "error(s): \(errors)" : "no errors"
         log("\(operation.operationName): will cancel with \(detail).")
     }
@@ -113,7 +113,7 @@ public struct LoggingObserver: OperationObserver {
      - parameter operation: the `Procedure` that finished.
      - parameter errors: an array of `ErrorType`, not that these will be printed out.
      */
-    public func willFinishOperation(_ operation: Procedure, errors: [ErrorProtocol]) {
+    public func willFinishOperation(_ operation: Procedure, errors: [Error]) {
         let detail = errors.count > 0 ? "error(s): \(errors)" : "no errors"
         log("\(operation.operationName): will finish with \(detail).")
     }
@@ -132,7 +132,7 @@ public struct LoggingObserver: OperationObserver {
     - parameter operation: the `Procedure` that finished.
     - parameter errors: an array of `ErrorType`, not that these will be printed out.
     */
-    public func didFinishOperation(_ operation: Procedure, errors: [ErrorProtocol]) {
+    public func didFinishOperation(_ operation: Procedure, errors: [Error]) {
         let detail = errors.count > 0 ? "error(s): \(errors)" : "no errors"
         log("\(operation.operationName): did finish with \(detail).")
     }

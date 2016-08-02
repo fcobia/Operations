@@ -120,7 +120,7 @@ public class RepeatableOperation<T: Procedure>: Procedure, OperationDidFinishObs
     }
 
     /// Implementation for OperationDidFinishObserver
-    public func didFinishOperation(_ operation: Procedure, errors: [ErrorProtocol]) {
+    public func didFinishOperation(_ operation: Procedure, errors: [Error]) {
         if self.operation == operation {
             finish(errors)
         }

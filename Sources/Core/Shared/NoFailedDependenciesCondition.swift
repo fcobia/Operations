@@ -16,7 +16,7 @@ the target operation will be fail.
 public class NoFailedDependenciesCondition: Condition {
 
     /// The `ErrorType` returned to indicate the condition failed.
-    public enum Error: ErrorProtocol, Equatable {
+    public enum Error: Swift.Error, Equatable {
 
         /// When some dependencies were cancelled
         case cancelledDependencies

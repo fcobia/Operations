@@ -261,7 +261,7 @@ public class RepeatedOperation<T where T: Operation>: GroupOperation {
      say `Procedure` instead of `MyOperation` (i.e. your specific
      operation which should be repeated).
      */
-    public override func willAttemptRecoveryFromErrors(_ errors: [ErrorProtocol], inOperation operation: Operation) -> Bool {
+    public override func willAttemptRecoveryFromErrors(_ errors: [Error], inOperation operation: Operation) -> Bool {
         addNextOperation(operation === current)
         return super.willAttemptRecoveryFromErrors(errors, inOperation: operation)
     }

@@ -79,7 +79,7 @@ public protocol OperationWillCancelObserver: OperationObserverType {
 
      - parameter operation: the observed `Procedure`.
      */
-    func willCancelOperation(_ operation: Procedure, errors: [ErrorProtocol])
+    func willCancelOperation(_ operation: Procedure, errors: [Error])
 }
 
 
@@ -128,7 +128,7 @@ public protocol OperationWillFinishObserver: OperationObserverType {
      - parameter operation: the observed `Procedure`.
      - parameter errors: an array of `ErrorType`s.
      */
-    func willFinishOperation(_ operation: Procedure, errors: [ErrorProtocol])
+    func willFinishOperation(_ operation: Procedure, errors: [Error])
 }
 
 
@@ -144,7 +144,7 @@ public protocol OperationDidFinishObserver: OperationObserverType {
      - parameter operation: the observed `Procedure`.
      - parameter errors: an array of `ErrorType`s.
      */
-    func didFinishOperation(_ operation: Procedure, errors: [ErrorProtocol])
+    func didFinishOperation(_ operation: Procedure, errors: [Error])
 }
 
 

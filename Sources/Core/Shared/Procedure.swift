@@ -82,10 +82,10 @@ public class Procedure: Operation {
     /// - returns: a unique String which can be used to identify the operation instance
     public let identifier = UUID().uuidString
 
-    private let stateLock = RecursiveLock()
+    private let stateLock = NSRecursiveLock()
     private var _log = Protector<LoggerType>(Logger())
     private var _state = State.initialized
-    private var _internalErrors = [ErrorProtocol]()
+    private var _internalErrors = [Error]()
     private var _isTransitioningToExecuting = false
     private var _isHandlingFinish = false
     private var _isHandlingCancel = false
@@ -105,7 +105,7 @@ public class Procedure: Operation {
     private var _cancelled = false  // should always be set by .cancel()
 
     /// Access the internal errors collected by the Procedure
-    public var errors: [ErrorProtocol] {
+    public var errors: [Error] {
         return stateLock.withCriticalScope { _internalErrors }
     }
 
@@ -299,7 +299,7 @@ public class Procedure: Operation {
      - parameter errors: an array of `ErrorType`.
      */
     @available(*, unavailable, renamed: "operationDidFinish")
-    public func finished(_ errors: [ErrorProtocol]) {
+    public func finished(_ errors: [Error]) {
         operationDidFinish(errors)
     }
 
@@ -309,7 +309,7 @@ public class Procedure: Operation {
 
      - parameter errors: an array of `ErrorType`.
      */
-    public func operationWillFinish(_ errors: [ErrorProtocol]) { /* No op */ }
+    public func operationWillFinish(_ errors: [Error]) { /* No op */ }
 
     /**
      Subclasses may override `operationDidFinish(_:)` if they wish to
@@ -317,7 +317,7 @@ public class Procedure: Operation {
 
      - parameter errors: an array of `ErrorType`.
      */
-    public func operationDidFinish(_ errors: [ErrorProtocol]) { /* no op */ }
+    public func operationDidFinish(_ errors: [Error]) { /* no op */ }
 
     // MARK: - Cancellation
 
@@ -326,7 +326,7 @@ public class Procedure: Operation {
 
      - parameter error: an optional `ErrorType`.
      */
-    public func cancelWithError(_ error: ErrorProtocol? = .none) {
+    public func cancelWithError(_ error: Error? = .none) {
         cancelWithErrors(error.map { [$0] } ?? [])
     }
 
@@ -335,7 +335,7 @@ public class Procedure: Operation {
 
      - parameter errors: an `[ErrorType]` defaults to empty array.
      */
-    public func cancelWithErrors(_ errors: [ErrorProtocol] = []) {
+    public func cancelWithErrors(_ errors: [Error] = []) {
         stateLock.withCriticalScope {
             if !errors.isEmpty {
                 log.warning("Did cancel with errors: \(errors).")
@@ -351,7 +351,7 @@ public class Procedure: Operation {
 
      - parameter errors: an array of `ErrorType`.
      */
-    public func operationWillCancel(_ errors: [ErrorProtocol]) { /* No op */ }
+    public func operationWillCancel(_ errors: [Error]) { /* No op */ }
 
     /**
      Subclasses may override `operationDidCancel(_:)` if they wish to
@@ -683,11 +683,11 @@ public extension Procedure {
 
      - parameter errors: an array of `ErrorType`, which defaults to empty.
      */
-    final func finish(_ receivedErrors: [ErrorProtocol] = []) {
+    final func finish(_ receivedErrors: [Error] = []) {
         _finish(receivedErrors, fromCancel: false)
     }
 
-    private final func _finish(_ receivedErrors: [ErrorProtocol], fromCancel: Bool = false) {
+    private final func _finish(_ receivedErrors: [Error], fromCancel: Bool = false) {
         let willFinish = stateLock.withCriticalScope { _ -> Bool in
             // Do not finish if already finished or finishing
             guard state <= .finishing else { return false }
@@ -718,7 +718,7 @@ public extension Procedure {
             didChangeValue(forKey: Operation.KeyPath.Executing.rawValue)
         }
 
-        let errors = stateLock.withCriticalScope { () -> [ErrorProtocol] in
+        let errors = stateLock.withCriticalScope { () -> [Error] in
             _internalErrors.append(contentsOf: receivedErrors)
             return _internalErrors
         }
@@ -748,7 +748,8 @@ public extension Procedure {
     }
 
     /// Convenience method to simplify finishing when there is only one error.
-    final func finish(_ receivedError: ErrorProtocol?) {
+	@nonobjc
+    final func finish(_ receivedError: Error?) {
         finish(receivedError.map { [$0]} ?? [])
     }
 
@@ -777,7 +778,7 @@ private func == (lhs: Procedure.State, rhs: Procedure.State) -> Bool {
 A common error type for Operations. Primarily used to indicate error when
 an Operation's conditions fail.
 */
-public enum OperationError: ErrorProtocol, Equatable {
+public enum OperationError: Error, Equatable {
 
     /// Indicates that a condition of the Procedure failed.
     case conditionFailed
@@ -786,7 +787,7 @@ public enum OperationError: ErrorProtocol, Equatable {
     case operationTimedOut(TimeInterval)
 
     /// Indicates that a parent operation was cancelled (with errors).
-    case parentOperationCancelledWithErrors([ErrorProtocol])
+    case parentOperationCancelledWithErrors([Error])
 }
 
 /// OperationError is Equatable.
@@ -863,7 +864,7 @@ private extension Operation {
     }
 }
 
-extension Foundation.Lock {
+extension Foundation.NSLock {
     func withCriticalScope<T>(_ block: @noescape () -> T) -> T {
         lock()
         let value = block()
@@ -872,7 +873,7 @@ extension Foundation.Lock {
     }
 }
 
-extension RecursiveLock {
+extension NSRecursiveLock {
     func withCriticalScope<T>(_ block: @noescape () -> T) -> T {
         lock()
         let value = block()

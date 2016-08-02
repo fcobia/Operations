@@ -46,23 +46,23 @@ public enum Queue {
     case background
 
     // swiftlint:disable variable_name
-    private var qos_attributes: DispatchQueueAttributes {
+    private var qos_attributes: DispatchQoS {
         switch self {
-        case .initiated: return .qosUserInitiated
-        case .interactive: return .qosUserInteractive
-        case .utility: return .qosUtility
-        case .background: return .qosBackground
-        default: return .qosDefault
+        case .initiated: return .userInitiated
+        case .interactive: return .userInteractive
+        case .utility: return .utility
+        case .background: return .background
+        default: return .default
         }
     }
 
-    private var qos_global_attributes: DispatchQueue.GlobalAttributes {
+	private var qos_global_attributes: DispatchQoS.QoSClass {
         switch self {
-        case .initiated: return .qosUserInitiated
-        case .interactive: return .qosUserInteractive
-        case .utility: return .qosUtility
-        case .background: return .qosBackground
-        default: return .qosDefault
+        case .initiated: return .userInitiated
+        case .interactive: return .userInteractive
+        case .utility: return .utility
+        case .background: return .background
+        default: return .default
         }
     }
     // swiftlint:enable variable_name
@@ -77,7 +77,7 @@ public enum Queue {
     public var queue: DispatchQueue {
         switch self {
         case .main: return .main
-        default: return .global(attributes: qos_global_attributes)
+        default: return .global(qos: qos_global_attributes)
         }
     }
 
@@ -92,7 +92,7 @@ public enum Queue {
      }
      */
     public func serial(_ named: String) -> DispatchQueue {
-        return DispatchQueue(label: named, attributes: [.serial, qos_attributes])
+		return DispatchQueue(label: named, qos: qos_attributes)
     }
 
     /**
@@ -106,7 +106,7 @@ public enum Queue {
      }
      */
     public func concurrent(_ named: String) -> DispatchQueue {
-        return DispatchQueue(label: named, attributes: [.concurrent, qos_attributes])
+		return DispatchQueue(label: named, qos: qos_attributes, attributes: [.concurrent])
     }
 
     /**

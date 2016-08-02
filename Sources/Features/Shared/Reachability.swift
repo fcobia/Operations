@@ -14,7 +14,7 @@ import SystemConfiguration
 public struct Reachability {
 
     /// Errors which can be thrown or returned.
-    public enum Error: ErrorProtocol {
+    public enum Error: Swift.Error {
         case failedToCreateDefaultRouteReachability
         case failedToSetNotifierCallback
         case failedToSetDispatchQueue
@@ -145,7 +145,7 @@ extension ReachabilityManager: HostReachabilityType {
 
 class DeviceReachability: NetworkReachabilityType {
 
-    typealias Error = Reachability.Error
+    typealias DeviceReachabilityError = Reachability.Error
 
     var __defaultRouteReachability: SCNetworkReachability? = .none
     var threadSafeProtector = Protector(false)
@@ -173,7 +173,7 @@ class DeviceReachability: NetworkReachabilityType {
 
         guard let reachability = withUnsafePointer(&zeroAddress, {
             SCNetworkReachabilityCreateWithAddress(nil, UnsafePointer($0))
-        }) else { throw Error.failedToCreateDefaultRouteReachability }
+        }) else { throw Reachability.Error.failedToCreateDefaultRouteReachability }
 
         __defaultRouteReachability = reachability
         return reachability
@@ -214,12 +214,12 @@ class DeviceReachability: NetworkReachabilityType {
 
             guard SCNetworkReachabilitySetCallback(reachability, __device_reachability_callback, &context) else {
                 stopNotifier()
-                throw Error.failedToSetNotifierCallback
+                throw Reachability.Error.failedToSetNotifierCallback
             }
 
             guard SCNetworkReachabilitySetDispatchQueue(reachability, queue) else {
                 stopNotifier()
-                throw Error.failedToSetDispatchQueue
+                throw Reachability.Error.failedToSetDispatchQueue
             }
         }
         check(reachability, queue: queue)
@@ -319,11 +319,11 @@ extension SCNetworkReachabilityFlags {
         return contains(.transientConnection)
     }
 
-    var isLocalAddress: Bool {
+    var isLocalAddressFlag: Bool {
         return contains(.isLocalAddress)
     }
 
-    var isDirect: Bool {
+    var isDirectFlag: Bool {
         return contains(.isDirect)
     }
 
