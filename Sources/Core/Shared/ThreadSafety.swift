@@ -26,9 +26,15 @@ struct Lock: ReadWriteLock {
 
     mutating func read<T>(_ block: () -> T) -> T {
         var object: T!
-        queue.sync {
-            object = block()
-        }
+		// Frank
+		queue.sync(flags: .barrier, execute: {
+			object = block()
+		})
+/*
+		queue.sync {
+			object = block()
+		}
+*/
         return object
     }
 
