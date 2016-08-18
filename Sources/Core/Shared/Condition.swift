@@ -12,13 +12,13 @@ public protocol ConditionType {
 
     var mutuallyExclusive: Bool { get set }
 
-    func evaluate(_ operation: Procedure, completion: (ConditionResult) -> Void)
+    func evaluate(_ operation: Procedure, completion: @escaping (ConditionResult) -> Void)
 }
 
 internal extension ConditionType {
 
     internal var category: String {
-        return "\(self.dynamicType)"
+        return "\(type(of: self))"
     }
 }
 
@@ -63,8 +63,8 @@ public func == (lhs: ConditionError, rhs: ConditionError) -> Bool {
 
  */
 public class Condition: Procedure, ConditionType, ResultOperationType {
-
-    public typealias CompletionBlockType = (ConditionResult) -> Void
+	
+	public typealias CompletionBlockType = @escaping (ConditionResult) -> Void
 
     public var mutuallyExclusive: Bool = false
 
@@ -191,7 +191,7 @@ internal class WrappedOperationCondition: Condition {
     let condition: OperationCondition
 
     var category: String {
-        return "\(condition.dynamicType)"
+        return "\(type(of: condition))"
     }
 
     init(_ condition: OperationCondition) {
@@ -201,7 +201,7 @@ internal class WrappedOperationCondition: Condition {
         name = condition.name
     }
 
-    override func evaluate(_ operation: Procedure, completion: CompletionBlockType) {
+	override func evaluate(_ operation: Procedure, completion: CompletionBlockType) {
         condition.evaluateForOperation(operation, completion: completion)
     }
 }

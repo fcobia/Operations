@@ -10,12 +10,12 @@ import Foundation
 
 protocol ReadWriteLock {
     mutating func read<T>(_ block: () -> T) -> T
-    mutating func write(_ block: () -> Void, completion: (() -> Void)?)
+    mutating func write(_ block: @escaping () -> Void, completion: (() -> Void)?)
 }
 
 extension ReadWriteLock {
 
-    mutating func write(_ block: () -> Void) {
+    mutating func write(_ block: @escaping () -> Void) {
         write(block, completion: nil)
     }
 }
@@ -38,7 +38,7 @@ struct Lock: ReadWriteLock {
         return object
     }
 
-    mutating func write(_ block: () -> Void, completion: (() -> Void)?) {
+    mutating internal func write(_ block: @escaping () -> Void, completion: (() -> Void)?) {
         queue.async(flags: .barrier, execute: {
             block()
             if let completion = completion {
@@ -50,22 +50,22 @@ struct Lock: ReadWriteLock {
 
 internal class Protector<T> {
 
-    private var lock: ReadWriteLock = Lock()
-    private var ward: T
+    fileprivate var lock: ReadWriteLock = Lock()
+    fileprivate var ward: T
 
     init(_ ward: T) {
         self.ward = ward
     }
 
-    func read<U>(_ block: (T) -> U) -> U {
+    func read<U>(_ block: @escaping (T) -> U) -> U {
         return lock.read { [unowned self] in block(self.ward) }
     }
 
-    func write(_ block: (inout T) -> Void) {
+    func write(_ block: @escaping (inout T) -> Void) {
         lock.write({ block(&self.ward) })
     }
 
-    func write(_ block: (inout T) -> Void, completion: (() -> Void)) {
+    func write(_ block: @escaping (inout T) -> Void, completion: (() -> Void)) {
         lock.write({ block(&self.ward) }, completion: completion)
     }
 }
@@ -78,14 +78,14 @@ extension Protector where T: RangeReplaceableCollection {
         })
     }
 
-    func appendContentsOf<S: Sequence where S.Iterator.Element == T.Iterator.Element>(_ newElements: S) {
+    func appendContentsOf<S: Sequence>(_ newElements: S) where S.Iterator.Element == T.Iterator.Element {
         write({ (ward: inout T) in
             ward.append(contentsOf: newElements)
         })
     }
 }
 
-public func dispatch_sync(queue: DispatchQueue, _ block: () throws -> Void) rethrows {
+public func dispatch_sync(queue: DispatchQueue, _ block: @escaping () throws -> Void) rethrows {
     var failure: Error? = .none
 
     let catcher = {

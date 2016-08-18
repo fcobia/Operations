@@ -88,10 +88,10 @@ extension InjectionOperationType where Self: Procedure {
      - returns: `self` - so that injections can be chained together.
     */
     @discardableResult
-    public func injectResultFromDependency<T where T: Procedure>(_ dep: T, block: (operation: Self, dependency: T, errors: [Error]) -> Void) -> Self {
+    public func injectResultFromDependency<T>(_ dep: T, block: @escaping (_ operation: Self, _ dependency: T, _ errors: [Error]) -> Void) -> Self where T: Procedure {
         dep.addObserver(WillFinishObserver { [weak self] op, errors in
             if let strongSelf = self, let dep = op as? T {
-                block(operation: strongSelf, dependency: dep, errors: errors)
+                block(strongSelf, dep, errors)
             }
         })
         dep.addObserver(DidCancelObserver { [weak self] op in
@@ -177,7 +177,7 @@ extension AutomaticInjectionOperationType where Self: Procedure {
      - returns: the receiver
     */
     @discardableResult
-    public func injectResultFromDependency<T where T: Procedure, T: ResultOperationType, T.Result == Requirement>(_ dep: T) -> Self {
+    public func injectResultFromDependency<T>(_ dep: T) -> Self where T: Procedure, T: ResultOperationType, T.Result == Requirement {
         return injectResultFromDependency(dep) { [weak self] operation, dependency, errors in
             if errors.isEmpty {
                 self?.requirement = dependency.result
@@ -205,7 +205,7 @@ extension AutomaticInjectionOperationType where Self: Procedure {
      - returns: the receiver
     */
     @discardableResult
-    public func requireResultFromDependency<T where T: Procedure, T: ResultOperationType, T.Result == Requirement>(_ dep: T) -> Self {
+    public func requireResultFromDependency<T>(_ dep: T) -> Self where T: Procedure, T: ResultOperationType, T.Result == Requirement {
         if conditions.filter({ return $0 is NoFailedDependenciesCondition }).count < 1 {
             addCondition(NoFailedDependenciesCondition())
         }

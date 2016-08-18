@@ -25,12 +25,12 @@ enum UserConfirmationError: Error {
 */
 public class UserConfirmationCondition<From: PresentingViewController>: Condition {
 
-    private let action: String
-    private let isDestructive: Bool
-    private let cancelAction: String
-    private var alert: AlertOperation<From>
-    private var confirmation: UserConfirmationResult = .unknown
-    private var alertOperationErrors = [Error]()
+    fileprivate let action: String
+    fileprivate let isDestructive: Bool
+    fileprivate let cancelAction: String
+    fileprivate var alert: AlertOperation<From>
+    fileprivate var confirmation: UserConfirmationResult = .unknown
+    fileprivate var alertOperationErrors = [Error]()
 
     public init(title: String, message: String? = .none, action: String, isDestructive: Bool = true, cancelAction: String = NSLocalizedString("Cancel", comment: "Cancel"), presentConfirmationFrom from: From) {
         self.action = action
@@ -54,7 +54,7 @@ public class UserConfirmationCondition<From: PresentingViewController>: Conditio
         addDependency(alert)
     }
 
-    public override func evaluate(_ operation: Procedure, completion: (OperationConditionResult) -> Void) {
+    public override func evaluate(_ operation: Procedure, completion: @escaping (OperationConditionResult) -> Void) {
         switch confirmation {
         case .unknown:
             // This should never happen, but you never know.

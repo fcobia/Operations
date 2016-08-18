@@ -32,7 +32,7 @@ For example
 */
 public class AlertOperation<From: PresentingViewController>: Procedure {
 
-    private var uiOperation: UIOperation<UIAlertController, From>
+    fileprivate var uiOperation: UIOperation<UIAlertController, From>
 
     /// Access the presented `UIAlertController`.
     public var alert: UIAlertController {
@@ -66,7 +66,7 @@ public class AlertOperation<From: PresentingViewController>: Procedure {
      - parameter handler: a block which receives the operation, and returns Void.
      */
     @discardableResult
-    public func addActionWithTitle(_ title: String, style: UIAlertActionStyle = .default, handler: (AlertOperation) -> Void = { _ in }) -> UIAlertAction {
+    public func addActionWithTitle(_ title: String, style: UIAlertActionStyle = .default, handler: @escaping (AlertOperation) -> Void = { _ in }) -> UIAlertAction {
         let action = UIAlertAction(title: title, style: style) { [weak self] _ in
             if let weakSelf = self {
                 handler(weakSelf)

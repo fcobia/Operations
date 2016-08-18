@@ -18,7 +18,7 @@ own logger attached.
 @available(iOS, deprecated: 9, message: "Use the log property of Procedure directly.")
 @available(OSX, deprecated: 10.11, message: "Use the log property of Procedure directly.")
 public struct LoggingObserver: OperationObserver {
-    public typealias LoggerBlockType = (message: String) -> Void
+    public typealias LoggerBlockType = (_ message: String) -> Void
 
     let logger: LoggerBlockType
     let queue: DispatchQueue
@@ -137,9 +137,9 @@ public struct LoggingObserver: OperationObserver {
         log("\(operation.operationName): did finish with \(detail).")
     }
 
-    private func log(_ message: String) {
+    fileprivate func log(_ message: String) {
         queue.async {
-            self.logger(message: message)
+            self.logger(message)
         }
     }
 }

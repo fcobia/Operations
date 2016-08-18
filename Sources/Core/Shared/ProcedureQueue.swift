@@ -96,8 +96,8 @@ public class ProcedureQueue: OperationQueue {
             }
         }
     }
-    private weak var _delegate: OperationQueueDelegate? = .none
-    private let delegateLock = Foundation.Lock()
+    fileprivate weak var _delegate: OperationQueueDelegate? = .none
+    fileprivate let delegateLock = Foundation.Lock()
     #endif
 
     /**
@@ -214,7 +214,7 @@ public extension OperationQueue {
      Add operations to the queue as an array
      - parameters ops: a array of `NSOperation` instances.
      */
-    func addOperations<S where S: Sequence, S.Iterator.Element: Operation>(_ ops: S) {
+    func addOperations<S>(_ ops: S) where S: Sequence, S.Iterator.Element: Operation {
         addOperations(Array(ops), waitUntilFinished: false)
     }
 
@@ -230,7 +230,7 @@ public extension OperationQueue {
 
 public extension ProcedureQueue {
 
-    private static let sharedMainQueue = MainQueue()
+    fileprivate static let sharedMainQueue = MainQueue()
 
     /**
      Override NSOperationQueue's mainQueue() to return the main queue as an ProcedureQueue
@@ -245,7 +245,7 @@ public extension ProcedureQueue {
 }
 
 /// ProcedureQueue wrapper around the main queue
-private class MainQueue: ProcedureQueue {
+fileprivate class MainQueue: ProcedureQueue {
     override init() {
         super.init()
         underlyingQueue = DispatchQueue.main

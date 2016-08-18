@@ -22,7 +22,7 @@ public protocol PhotosCapabilityRegistrarType: CapabilityRegistrarType {
      Request authorization to photos.
      - parameter handler: a PHAuthorizationStatus -> Void closure
     */
-    func opr_requestAuthorization(_ handler: (PHAuthorizationStatus) -> Void)
+    func opr_requestAuthorization(_ handler: @escaping (PHAuthorizationStatus) -> Void)
 }
 
 extension PHPhotoLibrary: PhotosCapabilityRegistrarType {
@@ -36,7 +36,7 @@ extension PHPhotoLibrary: PhotosCapabilityRegistrarType {
      Request authorization to photos.
      - parameter handler: a PHAuthorizationStatus -> Void closure
      */
-    public func opr_requestAuthorization(_ handler: (PHAuthorizationStatus) -> Void) {
+    public func opr_requestAuthorization(_ handler: @escaping (PHAuthorizationStatus) -> Void) {
         PHPhotoLibrary.requestAuthorization(handler)
     }
 }
@@ -105,7 +105,7 @@ public class PhotosCapability: CapabilityType {
      Request authorization to Photos from the Registrar.
      - parameter completion: a dispatch_block_t
      */
-    public func requestAuthorizationWithCompletion(_ completion: ()->()) {
+    public func requestAuthorizationWithCompletion(_ completion: @escaping ()->()) {
         switch registrar.opr_authorizationStatus() {
         case .notDetermined:
             registrar.opr_requestAuthorization { _ in

@@ -37,11 +37,11 @@ public protocol Repeatable {
     func shouldRepeat(_ count: Int) -> Bool
 }
 
-public class RepeatableGenerator<G: IteratorProtocol where G.Element: Repeatable>: IteratorProtocol {
+public class RepeatableGenerator<G: IteratorProtocol>: IteratorProtocol where G.Element: Repeatable {
 
-    private var generator: G
-    private var count: Int = 0
-    private var current: G.Element?
+    fileprivate var generator: G
+    fileprivate var count: Int = 0
+    fileprivate var current: G.Element?
 
     public init(_ generator: G) {
         self.generator = generator
@@ -69,7 +69,7 @@ extension RepeatedOperation where T: Repeatable {
      let operation = RepeatedOperation { MyRepeatableOperation() }
      ```
      */
-    public convenience init(maxCount max: Int? = .none, strategy: WaitStrategy = .fixed(0.1), body: () -> T?) {
+    public convenience init(maxCount max: Int? = .none, strategy: WaitStrategy = .fixed(0.1), body: @escaping () -> T?) {
         self.init(maxCount: max, strategy: strategy, generator: RepeatableGenerator(AnyIterator(body)))
     }
 }
@@ -96,7 +96,7 @@ public class RepeatableOperation<T: Procedure>: Procedure, OperationDidFinishObs
      - parameter [unnamed] operation: the operation instance.
      - parameter shouldRepeat: a closure of type Int -> Bool
      */
-    public init(_ operation: T, shouldRepeat: (Int) -> Bool) {
+    public init(_ operation: T, shouldRepeat: @escaping (Int) -> Bool) {
         self.operation = operation
         self.shouldRepeatBlock = shouldRepeat
         super.init()

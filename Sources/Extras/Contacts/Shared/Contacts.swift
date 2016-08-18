@@ -9,16 +9,16 @@
 import Contacts
 
 @available(iOS 9.0, OSX 10.11, *)
-public enum ContactsPermissionError: ErrorProtocol {
+public enum ContactsPermissionError: Error {
     case authorizationDenied
     case authorizationRestricted
     case authorizationNotDetermined
 }
 
 @available(iOS 9.0, OSX 10.11, *)
-public enum ContactsError: ErrorProtocol {
+public enum ContactsError: Error {
     case unknownErrorOccured
-    case errorOccured(NSError)
+    case errorOccured(Error)
 }
 
 @available(iOS 9.0, OSX 10.11, *)
@@ -40,13 +40,13 @@ public protocol ContactStoreType {
 
     init()
     func opr_authorizationStatusForEntityType(_ entityType: CNEntityType) -> CNAuthorizationStatus
-    func opr_requestAccessForEntityType(_ entityType: CNEntityType, completion: (Bool, NSError?) -> Void)
+    func opr_requestAccessForEntityType(_ entityType: CNEntityType, completion: @escaping (Bool, Error?) -> Void)
     func opr_defaultContainerIdentifier() -> String
     func opr_unifiedContactWithIdentifier(_ identifier: String, keysToFetch keys: [CNKeyDescriptor]) throws -> CNContact
     func opr_unifiedContactsMatchingPredicate(_ predicate: ContactPredicate, keysToFetch keys: [CNKeyDescriptor]) throws -> [CNContact]
     func opr_groupsMatchingPredicate(_ predicate: GroupPredicate?) throws -> [CNGroup]
     func opr_containersMatchingPredicate(_ predicate: ContainerPredicate?) throws -> [CNContainer]
-    func opr_enumerateContactsWithFetchRequest(_ fetchRequest: CNContactFetchRequest, usingBlock block: (CNContact, UnsafeMutablePointer<ObjCBool>) -> Void) throws
+    func opr_enumerateContactsWithFetchRequest(_ fetchRequest: CNContactFetchRequest, usingBlock block: @escaping (CNContact, UnsafeMutablePointer<ObjCBool>) -> Void) throws
     func opr_executeSaveRequest(_ saveRequest: SaveRequest) throws
 }
 
@@ -71,7 +71,7 @@ public enum ContainerPredicate {
     case ofContactWithIdentifier(String)
     case ofGroupWithIdentifier(String)
 
-    var predicate: Predicate {
+    var predicate: NSPredicate {
         switch self {
         case .withIdentifiers(let IDs):
             return CNContainer.predicateForContainers(withIdentifiers: IDs.map { $0.identifier })
@@ -90,7 +90,7 @@ public enum ContactPredicate {
     case inGroupWithIdentifier(String)
     case inContainerWithID(ContainerID)
 
-    var predicate: Predicate {
+    var predicate: NSPredicate {
         switch self {
         case .matchingName(let name):
             return CNContact.predicateForContacts(matchingName: name)
@@ -110,7 +110,7 @@ public enum GroupPredicate {
     case withIdentifiers([String])
     case inContainerWithID(ContainerID)
 
-    var predicate: Predicate {
+    var predicate: NSPredicate {
         switch self {
         case .withIdentifiers(let identifiers):
             return CNGroup.predicateForGroups(withIdentifiers: identifiers)
@@ -126,7 +126,7 @@ public enum GroupPredicate {
 @available(iOS 9.0, OSX 10.11, *)
 extension ContactStoreType {
 
-    public func flatMapAllContactsWithFetchRequest<T>(_ fetchRequest: CNContactFetchRequest, transform: (CNContact) -> T?) throws -> [T] {
+    public func flatMapAllContactsWithFetchRequest<T>(_ fetchRequest: CNContactFetchRequest, transform: @escaping (CNContact) -> T?) throws -> [T] {
         var result = [T]()
         try opr_enumerateContactsWithFetchRequest(fetchRequest) { contact, _ in
             if let tmp = transform(contact) {
@@ -176,6 +176,7 @@ extension CNSaveRequest: ContactSaveRequestType {
 
 @available(iOS 9.0, OSX 10.11, *)
 public struct SystemContactStore: ContactStoreType {
+
     public typealias SaveRequest = CNSaveRequest
 
     let store: CNContactStore
@@ -188,7 +189,7 @@ public struct SystemContactStore: ContactStoreType {
         return CNContactStore.authorizationStatus(for: entityType)
     }
 
-    public func opr_requestAccessForEntityType(_ entityType: CNEntityType, completion: (Bool, NSError?) -> Void) {
+    public func opr_requestAccessForEntityType(_ entityType: CNEntityType, completion: @escaping (Bool, Error?) -> Void) {
         store.requestAccess(for: entityType, completionHandler: completion)
     }
 
@@ -212,7 +213,7 @@ public struct SystemContactStore: ContactStoreType {
         return try store.containers(matching: predicate?.predicate)
     }
 
-    public func opr_enumerateContactsWithFetchRequest(_ fetchRequest: CNContactFetchRequest, usingBlock block: (CNContact, UnsafeMutablePointer<ObjCBool>) -> Void) throws {
+    public func opr_enumerateContactsWithFetchRequest(_ fetchRequest: CNContactFetchRequest, usingBlock block: @escaping (CNContact, UnsafeMutablePointer<ObjCBool>) -> Void) throws {
         try store.enumerateContacts(with: fetchRequest, usingBlock: block)
     }
 

@@ -12,11 +12,11 @@ internal class ExclusivityManager {
 
     static let sharedInstance = ExclusivityManager()
 
-    private let queue = Queue.initiated.serial("me.danthorpe.Operations.Exclusivity")
-    private var operations: [String: [Procedure]] = [:]
+    fileprivate let queue = Queue.initiated.serial("me.danthorpe.Operations.Exclusivity")
+    fileprivate var operations: [String: [Procedure]] = [:]
 
-    private init() {
-        // A private initalizer prevents any other part of the app
+    fileprivate init() {
+        // A fileprivate initalizer prevents any other part of the app
         // from creating an instance.
     }
 
@@ -30,7 +30,7 @@ internal class ExclusivityManager {
         }
     }
 
-    private func _addOperation(_ operation: Procedure, category: String) -> Operation? {
+    fileprivate func _addOperation(_ operation: Procedure, category: String) -> Operation? {
         operation.log.verbose(">>> \(category)")
 
         operation.addObserver(DidFinishObserver { [unowned self] op, _ in
@@ -52,7 +52,7 @@ internal class ExclusivityManager {
         return previous
     }
 
-    private func _removeOperation(_ operation: Procedure, category: String) {
+    fileprivate func _removeOperation(_ operation: Procedure, category: String) {
         operation.log.verbose("<<< \(category)")
 
         if let operationsWithThisCategory = operations[category], let index = operationsWithThisCategory.index(of: operation) {

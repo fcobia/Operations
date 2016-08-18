@@ -58,7 +58,7 @@ public class MapOperation<T, U>: ResultOperation<U>, AutomaticInjectionOperation
      - parameter transform: a closure which maps a non-optional T to U!. Note
      that this closure will only be run if the requirement is non-nil.
     */
-    public init(input: T! = .none, transform: (T) -> U) {
+    public init(input: T! = .none, transform: @escaping (T) -> U) {
         self.requirement = input
         self.transform = transform
         super.init(result: nil)
@@ -87,7 +87,7 @@ extension ResultOperationType where Self: Procedure {
      ```
 
     */
-    public func mapOperation<U>(_ transform: (Result) -> U) -> MapOperation<Result, U> {
+    public func mapOperation<U>(_ transform: @escaping (Result) -> U) -> MapOperation<Result, U> {
         let map: MapOperation<Result, U> = MapOperation(transform: transform)
         map.injectResultFromDependency(self) { operation, dependency, errors in
             if errors.isEmpty {
@@ -120,7 +120,7 @@ public class FilterOperation<Element>: ResultOperation<Array<Element>>, Automati
 
     let filter: (Element) -> Bool
 
-    public init(source: Array<Element> = [], includeElement: (Element) -> Bool) {
+    public init(source: Array<Element> = [], includeElement: @escaping (Element) -> Bool) {
         self.requirement = source
         self.filter = includeElement
         super.init(result: [])
@@ -145,7 +145,7 @@ extension ResultOperationType where Self: Procedure, Result: Sequence {
      queue.addOperations(getLocation, toString)
      ```
     */
-    public func filterOperation(_ includeElement: (Result.Iterator.Element) -> Bool) -> FilterOperation<Result.Iterator.Element> {
+    public func filterOperation(_ includeElement: @escaping (Result.Iterator.Element) -> Bool) -> FilterOperation<Result.Iterator.Element> {
         let filter: FilterOperation<Result.Iterator.Element> = FilterOperation(includeElement: includeElement)
         filter.injectResultFromDependency(self) { operation, dependency, errors in
             if errors.isEmpty {
@@ -179,7 +179,7 @@ public class ReduceOperation<Element, U>: ResultOperation<U>, AutomaticInjection
     let initial: U
     let combine: (U, Element) -> U
 
-    public init(source: Array<Element> = [], initial: U, combine: (U, Element) -> U) {
+    public init(source: Array<Element> = [], initial: U, combine: @escaping (U, Element) -> U) {
         self.requirement = source
         self.initial = initial
         self.combine = combine
@@ -208,7 +208,7 @@ extension ResultOperationType where Self: Procedure, Result: Sequence {
      ```
 
     */
-    public func reduceOperation<U>(_ initial: U, combine: (U, Result.Iterator.Element) -> U) -> ReduceOperation<Result.Iterator.Element, U> {
+    public func reduceOperation<U>(_ initial: U, combine: @escaping (U, Result.Iterator.Element) -> U) -> ReduceOperation<Result.Iterator.Element, U> {
         let reduce: ReduceOperation<Result.Iterator.Element, U> = ReduceOperation(initial: initial, combine: combine)
         reduce.injectResultFromDependency(self) { operation, dependency, errors in
             if errors.isEmpty {

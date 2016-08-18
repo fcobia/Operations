@@ -27,10 +27,10 @@ public class BackgroundObserver: NSObject {
 
     static let backgroundTaskName = "Background Procedure Observer"
 
-    private var identifier: UIBackgroundTaskIdentifier? = .none
-    private let application: BackgroundTaskApplicationInterface
+    fileprivate var identifier: UIBackgroundTaskIdentifier? = .none
+    fileprivate let application: BackgroundTaskApplicationInterface
 
-    private var isInBackground: Bool {
+    fileprivate var isInBackground: Bool {
         return application.applicationState == .background
     }
 
@@ -69,15 +69,15 @@ public class BackgroundObserver: NSObject {
         }
     }
 
-    private func startBackgroundTask() {
+    fileprivate func startBackgroundTask() {
         if identifier == nil {
-            identifier = application.beginBackgroundTaskWithName(self.dynamicType.backgroundTaskName) {
+            identifier = application.beginBackgroundTaskWithName(type(of: self).backgroundTaskName) {
                 self.endBackgroundTask()
             }
         }
     }
 
-    private func endBackgroundTask() {
+    fileprivate func endBackgroundTask() {
         if let id = identifier {
             application.endBackgroundTask(id)
             identifier = .none

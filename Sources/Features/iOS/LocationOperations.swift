@@ -45,8 +45,8 @@ internal extension CLLocationManager {
 }
 
 public enum LocationOperationError: Error, Equatable {
-    case locationManagerDidFail(NSError)
-    case geocoderError(NSError)
+    case locationManagerDidFail(Error)
+    case geocoderError(Error)
 }
 
 // MARK: - UserLocationOperation
@@ -54,8 +54,8 @@ public enum LocationOperationError: Error, Equatable {
 public class UserLocationOperation: Procedure, CLLocationManagerDelegate, ResultOperationType {
     public typealias CompletionBlockType = (CLLocation) -> Void
 
-    private let accuracy: CLLocationAccuracy
-    private let completion: CompletionBlockType
+    fileprivate let accuracy: CLLocationAccuracy
+    fileprivate let completion: CompletionBlockType
 
     internal var capability: LocationCapability
 
@@ -70,7 +70,7 @@ public class UserLocationOperation: Procedure, CLLocationManagerDelegate, Result
     }
 
     /// - returns: the CLLocation if available
-    public private(set) var location: CLLocation? = .none
+    public fileprivate(set) var location: CLLocation? = .none
 
     /// - returns: the CLLocation if available
     public var result: CLLocation? {
@@ -134,7 +134,7 @@ public class UserLocationOperation: Procedure, CLLocationManagerDelegate, Result
         }
     }
 
-    @objc public func locationManager(_ manager: CLLocationManager, didFailWithError error: NSError) {
+    @objc public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         Queue.main.queue.async { [weak self] in
             if let weakSelf = self {
                 weakSelf.stopLocationUpdates()
@@ -148,7 +148,7 @@ public class UserLocationOperation: Procedure, CLLocationManagerDelegate, Result
 
 public protocol ReverseGeocoderType {
     func opr_cancel()
-    func opr_reverseGeocodeLocation(_ location: CLLocation, completion: ([CLPlacemark], NSError?) -> Void)
+    func opr_reverseGeocodeLocation(_ location: CLLocation, completion: @escaping ([CLPlacemark], Error?) -> Void)
 }
 
 extension CLGeocoder: ReverseGeocoderType {
@@ -157,7 +157,7 @@ extension CLGeocoder: ReverseGeocoderType {
         cancelGeocode()
     }
 
-    public func opr_reverseGeocodeLocation(_ location: CLLocation, completion: ([CLPlacemark], NSError?) -> Void) {
+    public func opr_reverseGeocodeLocation(_ location: CLLocation, completion: @escaping ([CLPlacemark], Error?) -> Void) {
         reverseGeocodeLocation(location) { (results, error) in
             completion(results ?? [], error)
         }
@@ -179,10 +179,10 @@ public class ReverseGeocodeOperation: Procedure, ResultOperationType {
 
     internal lazy var geocoder: ReverseGeocoderType = CLGeocoder.create()
 
-    private let completion: CompletionBlockType
+    fileprivate let completion: CompletionBlockType
 
     /// - returns: the CLPlacemark from the geocoder
-    public private(set) var placemark: CLPlacemark? = .none
+    public fileprivate(set) var placemark: CLPlacemark? = .none
 
     /// - returns: the CLPlacemark from the geocoder
     public var result: CLPlacemark? {
@@ -236,7 +236,7 @@ public class ReverseGeocodeOperation: Procedure, ResultOperationType {
 public class ReverseGeocodeUserLocationOperation: GroupOperation, ResultOperationType {
     public typealias CompletionBlockType = (CLLocation, CLPlacemark) -> Void
 
-    private let completion: CompletionBlockType
+    fileprivate let completion: CompletionBlockType
 
     internal let userLocationOperation: UserLocationOperation
     internal var reverseGeocodeOperation: ReverseGeocodeOperation?
@@ -292,9 +292,9 @@ public class ReverseGeocodeUserLocationOperation: GroupOperation, ResultOperatio
 public func == (lhs: LocationOperationError, rhs: LocationOperationError) -> Bool {
     switch (lhs, rhs) {
     case let (.locationManagerDidFail(aError), .locationManagerDidFail(bError)):
-        return aError == bError
+        return aError as NSError == bError as NSError
     case let (.geocoderError(aError), .geocoderError(bError)):
-        return aError == bError
+        return aError as NSError == bError as NSError
     default:
         return false
     }

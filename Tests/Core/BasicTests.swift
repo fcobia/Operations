@@ -451,7 +451,7 @@ class CancellationOperationTests: OperationTests {
     }
 }
 
-private class TestHandlesFinishOperation: Procedure {
+fileprivate class TestHandlesFinishOperation: Procedure {
     override init() {
         super.init(disableAutomaticFinishing: true)
     }

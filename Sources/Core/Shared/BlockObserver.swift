@@ -8,16 +8,16 @@
 
 import Foundation
 
-public typealias DidAttachToOperationBlock = (operation: Procedure) -> Void
+public typealias DidAttachToOperationBlock = (_ operation: Procedure) -> Void
 
 /**
  WillStartObserver is an observer which will execute a
  closure when the operation starts.
  */
 public struct WillExecuteObserver: OperationWillExecuteObserver {
-    public typealias BlockType = (operation: Procedure) -> Void
+    public typealias BlockType = (_ operation: Procedure) -> Void
 
-    private let block: BlockType
+    fileprivate let block: BlockType
 
     /// - returns: a block which is called when the observer is attached to an operation
     public var didAttachToOperation: DidAttachToOperationBlock? = .none
@@ -34,12 +34,12 @@ public struct WillExecuteObserver: OperationWillExecuteObserver {
 
     /// Conforms to `OperationWillStartObserver`, executes the block
     public func willExecuteOperation(_ operation: Procedure) {
-        block(operation: operation)
+        block(operation)
     }
 
     /// Base OperationObserverType method
     public func didAttachToOperation(_ operation: Procedure) {
-        didAttachToOperation?(operation: operation)
+        didAttachToOperation?(operation)
     }
 }
 
@@ -51,9 +51,9 @@ public typealias StartedObserver = WillExecuteObserver
  closure when the operation cancels.
  */
 public struct WillCancelObserver: OperationWillCancelObserver {
-    public typealias BlockType = (operation: Procedure, errors: [Error]) -> Void
+    public typealias BlockType = (_ operation: Procedure, _ errors: [Error]) -> Void
 
-    private let block: BlockType
+    fileprivate let block: BlockType
 
     /// - returns: a block which is called when the observer is attached to an operation
     public var didAttachToOperation: DidAttachToOperationBlock? = .none
@@ -70,12 +70,12 @@ public struct WillCancelObserver: OperationWillCancelObserver {
 
     /// Conforms to `OperationWillCancelObserver`, executes the block
     public func willCancelOperation(_ operation: Procedure, errors: [Error]) {
-        block(operation: operation, errors: errors)
+        block(operation, errors)
     }
 
     /// Base OperationObserverType method
     public func didAttachToOperation(_ operation: Procedure) {
-        didAttachToOperation?(operation: operation)
+        didAttachToOperation?(operation)
     }
 }
 
@@ -85,9 +85,9 @@ public struct WillCancelObserver: OperationWillCancelObserver {
  closure when the operation cancels.
  */
 public struct DidCancelObserver: OperationDidCancelObserver {
-    public typealias BlockType = (operation: Procedure) -> Void
+    public typealias BlockType = (_ operation: Procedure) -> Void
 
-    private let block: BlockType
+    fileprivate let block: BlockType
 
     /// - returns: a block which is called when the observer is attached to an operation
     public var didAttachToOperation: DidAttachToOperationBlock? = .none
@@ -104,12 +104,12 @@ public struct DidCancelObserver: OperationDidCancelObserver {
 
     /// Conforms to `OperationDidCancelObserver`, executes the block
     public func didCancelOperation(_ operation: Procedure) {
-        block(operation: operation)
+        block(operation)
     }
 
     /// Base OperationObserverType method
     public func didAttachToOperation(_ operation: Procedure) {
-        didAttachToOperation?(operation: operation)
+        didAttachToOperation?(operation)
     }
 }
 
@@ -122,9 +122,9 @@ public typealias CancelledObserver = DidCancelObserver
  closure when the operation produces another observer.
  */
 public struct ProducedOperationObserver: OperationDidProduceOperationObserver {
-    public typealias BlockType = (operation: Procedure, produced: Operation) -> Void
+    public typealias BlockType = (_ operation: Procedure, _ produced: Operation) -> Void
 
-    private let block: BlockType
+    fileprivate let block: BlockType
 
     /// - returns: a block which is called when the observer is attached to an operation
     public var didAttachToOperation: DidAttachToOperationBlock? = .none
@@ -141,12 +141,12 @@ public struct ProducedOperationObserver: OperationDidProduceOperationObserver {
 
     /// Conforms to `OperationDidProduceOperationObserver`, executes the block
     public func operation(_ operation: Procedure, didProduceOperation newOperation: Operation) {
-        block(operation: operation, produced: newOperation)
+        block(operation, newOperation)
     }
 
     /// Base OperationObserverType method
     public func didAttachToOperation(_ operation: Procedure) {
-        didAttachToOperation?(operation: operation)
+        didAttachToOperation?(operation)
     }
 }
 
@@ -156,9 +156,9 @@ public struct ProducedOperationObserver: OperationDidProduceOperationObserver {
  closure when the operation is about to finish.
  */
 public struct WillFinishObserver: OperationWillFinishObserver {
-    public typealias BlockType = (operation: Procedure, errors: [Error]) -> Void
+    public typealias BlockType = (_ operation: Procedure, _ errors: [Error]) -> Void
 
-    private let block: BlockType
+    fileprivate let block: BlockType
 
     /// - returns: a block which is called when the observer is attached to an operation
     public var didAttachToOperation: DidAttachToOperationBlock? = .none
@@ -175,12 +175,12 @@ public struct WillFinishObserver: OperationWillFinishObserver {
 
     /// Conforms to `OperationWillFinishObserver`, executes the block
     public func willFinishOperation(_ operation: Procedure, errors: [Error]) {
-        block(operation: operation, errors: errors)
+        block(operation, errors)
     }
 
     /// Base OperationObserverType method
     public func didAttachToOperation(_ operation: Procedure) {
-        didAttachToOperation?(operation: operation)
+        didAttachToOperation?(operation)
     }
 }
 
@@ -190,9 +190,9 @@ public struct WillFinishObserver: OperationWillFinishObserver {
  closure when the operation did just finish.
  */
 public struct DidFinishObserver: OperationDidFinishObserver {
-    public typealias BlockType = (operation: Procedure, errors: [Error]) -> Void
+    public typealias BlockType = (_ operation: Procedure, _ errors: [Error]) -> Void
 
-    private let block: BlockType
+    fileprivate let block: BlockType
 
     /// - returns: a block which is called when the observer is attached to an operation
     public var didAttachToOperation: DidAttachToOperationBlock? = .none
@@ -209,12 +209,12 @@ public struct DidFinishObserver: OperationDidFinishObserver {
 
     /// Conforms to `OperationDidFinishObserver`, executes the block
     public func didFinishOperation(_ operation: Procedure, errors: [Error]) {
-        block(operation: operation, errors: errors)
+        block(operation, errors)
     }
 
     /// Base OperationObserverType method
     public func didAttachToOperation(_ operation: Procedure) {
-        didAttachToOperation?(operation: operation)
+        didAttachToOperation?(operation)
     }
 }
 
@@ -295,6 +295,6 @@ public struct BlockObserver: OperationObserver {
 
     /// Base OperationObserverType method
     public func didAttachToOperation(_ operation: Procedure) {
-        didAttachToOperation?(operation: operation)
+        didAttachToOperation?(operation)
     }
 }

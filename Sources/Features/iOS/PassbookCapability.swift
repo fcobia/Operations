@@ -75,7 +75,7 @@ public class PassbookCapability: CapabilityType {
     }
 
     /// requests authorization - a no-op, will just execute the completion block.
-    public func requestAuthorizationWithCompletion(_ completion: ()->()) {
+    public func requestAuthorizationWithCompletion(_ completion: @escaping ()->()) {
         completion()
     }
 }

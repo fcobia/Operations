@@ -39,9 +39,9 @@ public class OpenInSafariOperation<From: PresentingViewController>: GroupOperati
     internal var openURL: (Foundation.URL) -> Void = { UIApplication.shared.openURL($0) }
 
     /// The presenting `ViewControllerDisplayStyle`
-    private let displayControllerFrom: ViewControllerDisplayStyle<From>
+    fileprivate let displayControllerFrom: ViewControllerDisplayStyle<From>
     /// The `AnyObject` sender.
-    private let sender: AnyObject?
+    fileprivate let sender: AnyObject?
 
     /**
      Initializes an `OpenInSafariOperation` with a base `URL` and some optional customization.

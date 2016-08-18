@@ -18,16 +18,16 @@ final class TestableCloudContainer: NSObject {
     var didCreateContainerWithDefaultIdentifier = false
 
     var accountStatus: CKAccountStatus = .couldNotDetermine
-    var accountStatusError: NSError? = .none
+    var accountStatusError: Error? = .none
     var didGetAccountStatus = false
 
     var verifyApplicationPermissionStatus: CKApplicationPermissionStatus = .initialState
-    var verifyApplicationPermissionsError: NSError? = .none
+    var verifyApplicationPermissionsError: Error? = .none
     var verifyApplicationPermissions: CKApplicationPermissions? = .none
     var didVerifyApplicationStatus = false
 
     var requestApplicationPermissionStatus: CKApplicationPermissionStatus = .granted
-    var requestApplicationPermissionsError: NSError? = .none
+    var requestApplicationPermissionsError: Error? = .none
     var requestApplicationPermissions: CKApplicationPermissions? = .none
     var didRequestApplicationStatus = false
 
@@ -52,7 +52,7 @@ extension TestableCloudContainer: CloudContainerRegistrarType {
         return container
     }
 
-    func opr_accountStatusWithCompletionHandler(_ completionHandler: (CKAccountStatus, NSError?) -> Void) {
+    func opr_accountStatusWithCompletionHandler(_ completionHandler: (CKAccountStatus, Error?) -> Void) {
         didGetAccountStatus = true
         completionHandler(accountStatus, accountStatusError)
     }
@@ -207,7 +207,7 @@ class CloudCapabilitiesTests: XCTestCase {
 
 class CloudStatusTests: XCTestCase {
 
-    let error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: .none)
+    let error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: .none)
     var noRequirement: CKApplicationPermissions = []
     var someRequirement: CKApplicationPermissions = [ .userDiscoverability ]
     var status: CloudStatus!

@@ -63,7 +63,7 @@ protocol ReachabilityManagerType {
 
 protocol SystemReachabilityType: ReachabilityManagerType {
 
-    func whenConnected(_ conn: Reachability.Connectivity, block: () -> Void)
+    func whenConnected(_ conn: Reachability.Connectivity, block: @escaping () -> Void)
 }
 
 protocol HostReachabilityType: ReachabilityManagerType {
@@ -120,7 +120,7 @@ extension ReachabilityManager: NetworkReachabilityDelegate {
 extension ReachabilityManager: SystemReachabilityType {
 
     // swiftlint:disable force_try
-    func whenConnected(_ conn: Reachability.Connectivity, block: () -> Void) {
+    func whenConnected(_ conn: Reachability.Connectivity, block: @escaping () -> Void) {
         _observers.write({ (mutableObservers: inout [Reachability.Observer]) in
             mutableObservers.append(Reachability.Observer(connectivity: conn, whenConnectedBlock: block))
         }, completion: { try! self.network.startNotifierOnQueue(self.queue) })
@@ -168,11 +168,11 @@ class DeviceReachability: NetworkReachabilityType {
         if let reachability = __defaultRouteReachability { return reachability }
 
         var zeroAddress = sockaddr_in()
-        zeroAddress.sin_len = UInt8(sizeofValue(zeroAddress))
+        zeroAddress.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
         zeroAddress.sin_family = sa_family_t(AF_INET)
 
-        guard let reachability = withUnsafePointer(&zeroAddress, {
-            SCNetworkReachabilityCreateWithAddress(nil, UnsafePointer($0))
+        guard let reachability = withUnsafePointer(to: &zeroAddress, {
+			$0.withMemoryRebound(to: sockaddr.self, capacity: 1, { SCNetworkReachabilityCreateWithAddress(nil, $0) })
         }) else { throw Reachability.Error.failedToCreateDefaultRouteReachability }
 
         __defaultRouteReachability = reachability
@@ -185,7 +185,7 @@ class DeviceReachability: NetworkReachabilityType {
 
     func getFlagsForReachability(_ reachability: SCNetworkReachability) -> SCNetworkReachabilityFlags {
         var flags = SCNetworkReachabilityFlags()
-        guard withUnsafeMutablePointer(&flags, {
+        guard withUnsafeMutablePointer(to: &flags, {
             SCNetworkReachabilityGetFlags(reachability, UnsafeMutablePointer($0))
         }) else { return SCNetworkReachabilityFlags() }
 
@@ -210,7 +210,7 @@ class DeviceReachability: NetworkReachabilityType {
         if !notifierIsRunning {
             notifierIsRunning = true
             var context = SCNetworkReachabilityContext(version: 0, info: nil, retain: nil, release: nil, copyDescription: nil)
-            context.info = UnsafeMutablePointer(Unmanaged.passUnretained(self).toOpaque())
+			context.info = UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque())
 
             guard SCNetworkReachabilitySetCallback(reachability, __device_reachability_callback, &context) else {
                 stopNotifier()
@@ -239,7 +239,7 @@ class DeviceReachability: NetworkReachabilityType {
     }
 }
 
-private func __device_reachability_callback(_ reachability: SCNetworkReachability, flags: SCNetworkReachabilityFlags, info: UnsafeMutablePointer<Void>?) {
+fileprivate func __device_reachability_callback(_ reachability: SCNetworkReachability, flags: SCNetworkReachabilityFlags, info: UnsafeMutableRawPointer?) {
     guard let info = info else { return }
 
     let handler = Unmanaged<DeviceReachability>.fromOpaque(info).takeUnretainedValue()

@@ -12,7 +12,7 @@ import AddressBook
 @available(iOS, deprecated: 9.0)
 public class AddressBookCondition: Condition {
 
-    public enum Error: ErrorProtocol {
+    public enum Error: Swift.Error {
         case authorizationDenied
         case authorizationRestricted
         case authorizationNotDetermined
@@ -37,7 +37,7 @@ public class AddressBookCondition: Condition {
         }
     }
 
-    public override func evaluate(_ operation: Procedure, completion: (OperationConditionResult) -> Void) {
+    public override func evaluate(_ operation: Procedure, completion: CompletionBlockType) {
         switch registrar.status {
         case .authorized:
             completion(.satisfied)

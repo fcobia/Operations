@@ -29,7 +29,7 @@ public class GroupOperation: Procedure, OperationQueueDelegate {
         var attemptedRecovery: ErrorsByOperation = [:]
 
         var previousAttempts: [Error] {
-            return Array(attemptedRecovery.values.flatten())
+            return Array(attemptedRecovery.values.joined())
         }
 
         var all: [Error] {
@@ -41,18 +41,18 @@ public class GroupOperation: Procedure, OperationQueueDelegate {
         }
     }
 
-    private let finishingOperation = Foundation.BlockOperation { }
-    private var protectedErrors = Protector(Errors())
-    private var canFinishOperation: GroupOperation.CanFinishOperation!
-    private var isGroupFinishing = false
-    private let groupFinishLock = NSRecursiveLock()
-    private var isAddingOperationsGroup = DispatchGroup()
+    fileprivate let finishingOperation = Foundation.BlockOperation { }
+    fileprivate var protectedErrors = Protector(Errors())
+    fileprivate var canFinishOperation: GroupOperation.CanFinishOperation!
+    fileprivate var isGroupFinishing = false
+    fileprivate let groupFinishLock = NSRecursiveLock()
+    fileprivate var isAddingOperationsGroup = DispatchGroup()
 
     /// - returns: the ProcedureQueue the group runs operations on.
     public let queue = ProcedureQueue()
 
     /// - returns: the operations which have been added to the queue
-    public private(set) var operations: [Operation] {
+    public fileprivate(set) var operations: [Operation] {
         get {
             return _operations.read { $0 }
         }
@@ -62,7 +62,7 @@ public class GroupOperation: Procedure, OperationQueueDelegate {
             }
         }
     }
-    private var _operations: Protector<[Operation]>
+    fileprivate var _operations: Protector<[Operation]>
 
     public override var userIntent: Procedure.UserIntent {
         didSet {
@@ -145,7 +145,7 @@ public class GroupOperation: Procedure, OperationQueueDelegate {
         _addOperations(additional, addToOperationsArray: true)
     }
 
-    private func _addOperations(_ additional: [Operation], addToOperationsArray: Bool = true) {
+    fileprivate func _addOperations(_ additional: [Operation], addToOperationsArray: Bool = true) {
 
         if additional.count > 0 {
 
@@ -346,7 +346,7 @@ public extension GroupOperation {
     var fatalErrors: [Error] {
 		let x = internalErrors.fatal
 		print(x)
-		print(x.dynamicType)
+		print(type(of: x))
 		print(x.count)
 		print(x.first)
 		return x
@@ -421,9 +421,9 @@ extension GroupOperation {
  child operation to its queue.
  */
 public struct WillAddChildObserver: GroupOperationWillAddChildObserver {
-    public typealias BlockType = (group: GroupOperation, child: Operation) -> Void
+    public typealias BlockType = (_ group: GroupOperation, _ child: Operation) -> Void
 
-    private let block: BlockType
+    fileprivate let block: BlockType
 
     /// - returns: a block which is called when the observer is attached to an operation
     public var didAttachToOperation: DidAttachToOperationBlock? = .none
@@ -440,16 +440,16 @@ public struct WillAddChildObserver: GroupOperationWillAddChildObserver {
 
     /// Conforms to GroupOperationWillAddChildObserver
     public func groupOperation(_ group: GroupOperation, willAddChildOperation child: Operation) {
-        block(group: group, child: child)
+        block(group, child)
     }
 
     /// Base OperationObserverType method
     public func didAttachToOperation(_ operation: Procedure) {
-        didAttachToOperation?(operation: operation)
+        didAttachToOperation?(operation)
     }
 }
 
-private extension GroupOperation {
+fileprivate extension GroupOperation {
     /**
      The group operation handles thread-safe addition of operations by utilizing two final operations:
      - a CanFinishOperation which manages handling GroupOperation internal state and has every child
@@ -462,10 +462,10 @@ private extension GroupOperation {
      to process that the GroupOperation is finishing (i.e. prior to the CanFinishOperation executing and
      acquiring the GroupOperation.groupFinishLock to set state).
      */
-    private class CanFinishOperation: Operation {
-        private weak var parent: GroupOperation?
-        private var _finished = false
-        private var _executing = false
+    fileprivate class CanFinishOperation: Operation {
+        fileprivate weak var parent: GroupOperation?
+        fileprivate var _finished = false
+        fileprivate var _executing = false
 
         init(parentGroupOperation: GroupOperation) {
             self.parent = parentGroupOperation
@@ -552,7 +552,7 @@ private extension GroupOperation {
             isExecuting = false
             isFinished = true
         }
-        override private(set) var isExecuting: Bool {
+        override fileprivate(set) var isExecuting: Bool {
             get {
                 return _executing
             }
@@ -562,7 +562,7 @@ private extension GroupOperation {
                 didChangeValue(forKey: "isExecuting")
             }
         }
-        override private(set) var isFinished: Bool {
+        override fileprivate(set) var isFinished: Bool {
             get {
                 return _finished
             }
@@ -574,14 +574,14 @@ private extension GroupOperation {
         }
     }
 
-    private func _addCanFinishOperation(_ canFinishOperation: GroupOperation.CanFinishOperation) {
+    fileprivate func _addCanFinishOperation(_ canFinishOperation: GroupOperation.CanFinishOperation) {
         finishingOperation.addDependency(canFinishOperation)
         queue._addCanFinishOperation(canFinishOperation)
     }
 }
 
-private extension ProcedureQueue {
-    private func _addCanFinishOperation(_ canFinishOperation: GroupOperation.CanFinishOperation) {
+fileprivate extension ProcedureQueue {
+    fileprivate func _addCanFinishOperation(_ canFinishOperation: GroupOperation.CanFinishOperation) {
         // Do not add observers (not needed - CanFinishOperation is an implementation detail of GroupOperation)
         // Do not add conditions (CanFinishOperation has none)
         // Call NSOperationQueue.addOperation() directly

@@ -51,9 +51,9 @@ time-out.
 */
 public class DelayOperation: Procedure {
 
-    private let delay: Delay
-    private let leeway: DispatchTimeInterval
-    private let timer: DispatchSourceTimer
+    fileprivate let delay: Delay
+    fileprivate let leeway: DispatchTimeInterval
+    fileprivate let timer: DispatchSourceTimer
 
     internal init(delay: Delay, leeway: Int = 1_000_000) {
         self.delay = delay

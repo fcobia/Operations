@@ -113,7 +113,7 @@ public typealias CKFetchOperationType = protocol<CKPreviousServerChangeToken, CK
 public protocol CKDiscoverAllContactsOperationType: CKOperationType {
 
     /// - returns: the completion block used for discovering all contacts.
-    var discoverAllContactsCompletionBlock: (([DiscoveredUserInfo]?, NSError?) -> Void)? { get set }
+    var discoverAllContactsCompletionBlock: (([DiscoveredUserInfo]?, Error?) -> Void)? { get set }
 }
 
 /// A generic protocol which exposes the properties used by Apple's CKDiscoverUserInfosOperation.
@@ -126,7 +126,7 @@ public protocol CKDiscoverUserInfosOperationType: CKOperationType {
     var userRecordIDs: [RecordID]? { get set }
 
     /// - returns: the completion block used for discovering user infos
-    var discoverUserInfosCompletionBlock: (([String: DiscoveredUserInfo]?, [RecordID: DiscoveredUserInfo]?, NSError?) -> Void)? { get set }
+    var discoverUserInfosCompletionBlock: (([String: DiscoveredUserInfo]?, [RecordID: DiscoveredUserInfo]?, Error?) -> Void)? { get set }
 }
 
 /// A generic protocol which exposes the properties used by Apple's CKFetchNotificationChangesOperation.
@@ -136,7 +136,7 @@ public protocol CKFetchNotificationChangesOperationType: CKFetchOperationType {
     var notificationChangedBlock: ((Notification) -> Void)? { get set }
 
     /// - returns: the completion block used for notification changes.
-    var fetchNotificationChangesCompletionBlock: ((ServerChangeToken?, NSError?) -> Void)? { get set }
+    var fetchNotificationChangesCompletionBlock: ((ServerChangeToken?, Error?) -> Void)? { get set }
 }
 
 /// A generic protocol which exposes the properties used by Apple's CKMarkNotificationsReadOperation.
@@ -146,7 +146,7 @@ public protocol CKMarkNotificationsReadOperationType: CKOperationType {
     var notificationIDs: [NotificationID] { get set }
 
     /// - returns: the completion block used when marking notifications
-    var markNotificationsReadCompletionBlock: (([NotificationID]?, NSError?) -> Void)? { get set }
+    var markNotificationsReadCompletionBlock: (([NotificationID]?, Error?) -> Void)? { get set }
 }
 
 /// A generic protocol which exposes the properties used by Apple's CKModifyBadgeOperation.
@@ -156,7 +156,7 @@ public protocol CKModifyBadgeOperationType: CKOperationType {
     var badgeValue: Int { get set }
 
     /// - returns: the completion block used
-    var modifyBadgeCompletionBlock: ((NSError?) -> Void)? { get set }
+    var modifyBadgeCompletionBlock: ((Error?) -> Void)? { get set }
 }
 
 /// A generic protocol which exposes the properties used by Apple's CKFetchRecordChangesOperation.
@@ -172,7 +172,7 @@ public protocol CKFetchRecordChangesOperationType: CKDatabaseOperationType, CKFe
     var recordWithIDWasDeletedBlock: ((RecordID) -> Void)? { get set }
 
     /// - returns: the completion for fetching records
-    var fetchRecordChangesCompletionBlock: ((ServerChangeToken?, Data?, NSError?) -> Void)? { get set }
+    var fetchRecordChangesCompletionBlock: ((ServerChangeToken?, Data?, Error?) -> Void)? { get set }
 }
 
 /// A generic protocol which exposes the properties used by Apple's CKFetchRecordZonesOperation.
@@ -182,7 +182,7 @@ public protocol CKFetchRecordZonesOperationType: CKDatabaseOperationType {
     var recordZoneIDs: [RecordZoneID]? { get set }
 
     /// - returns: the completion block for fetching record zones
-    var fetchRecordZonesCompletionBlock: (([RecordZoneID: RecordZone]?, NSError?) -> Void)? { get set }
+    var fetchRecordZonesCompletionBlock: (([RecordZoneID: RecordZone]?, Error?) -> Void)? { get set }
 }
 
 /// A generic protocol which exposes the properties used by Apple's CKFetchRecordsOperation.
@@ -195,10 +195,10 @@ public protocol CKFetchRecordsOperationType: CKDatabaseOperationType, CKDesiredK
     var perRecordProgressBlock: ((RecordID, Double) -> Void)? { get set }
 
     /// - returns: a per record completion block
-    var perRecordCompletionBlock: ((Record?, RecordID?, NSError?) -> Void)? { get set }
+    var perRecordCompletionBlock: ((Record?, RecordID?, Error?) -> Void)? { get set }
 
     /// - returns: the fetch record completion block
-    var fetchRecordsCompletionBlock: (([RecordID: Record]?, NSError?) -> Void)? { get set }
+    var fetchRecordsCompletionBlock: (([RecordID: Record]?, Error?) -> Void)? { get set }
 }
 
 /// A generic protocol which exposes the properties used by Apple's CKFetchSubscriptionsOperation.
@@ -208,7 +208,7 @@ public protocol CKFetchSubscriptionsOperationType: CKDatabaseOperationType {
     var subscriptionIDs: [String]? { get set }
 
     /// - returns: the fetch subscription completion block
-    var fetchSubscriptionCompletionBlock: (([String: Subscription]?, NSError?) -> Void)? { get set }
+    var fetchSubscriptionCompletionBlock: (([String: Subscription]?, Error?) -> Void)? { get set }
 }
 
 /// A generic protocol which exposes the properties used by Apple's CKModifyRecordZonesOperation.
@@ -223,7 +223,7 @@ public protocol CKModifyRecordZonesOperationType: CKDatabaseOperationType {
     var recordZoneIDsToDelete: [RecordZoneID]? { get set }
 
     /// - returns: the modify record zones completion block
-    var modifyRecordZonesCompletionBlock: (([RecordZone]?, [RecordZoneID]?, NSError?) -> Void)? { get set }
+    var modifyRecordZonesCompletionBlock: (([CKRecordZone]?, [CKRecordZoneID]?, Error?) -> Void)? { get set }
 }
 
 // A generic protocol which exposes the properties used by Apple's CKModifyRecordsOperation.
@@ -250,10 +250,10 @@ public protocol CKModifyRecordsOperationType: CKDatabaseOperationType {
     var perRecordProgressBlock: ((Record, Double) -> Void)? { get set }
 
     /// - returns: a per record completion block
-    var perRecordCompletionBlock: ((Record?, NSError?) -> Void)? { get set }
+    var perRecordCompletionBlock: ((Record?, Error?) -> Void)? { get set }
 
     /// - returns: the modify records completion block
-    var modifyRecordsCompletionBlock: (([Record]?, [RecordID]?, NSError?) -> Void)? { get set }
+    var modifyRecordsCompletionBlock: (([Record]?, [RecordID]?, Error?) -> Void)? { get set }
 }
 
 /// A generic protocol which exposes the properties used by Apple's CKModifySubscriptionsOperation.
@@ -266,7 +266,7 @@ public protocol CKModifySubscriptionsOperationType: CKDatabaseOperationType {
     var subscriptionIDsToDelete: [String]? { get set }
 
     /// - returns: the modify subscription completion block
-    var modifySubscriptionsCompletionBlock: (([Subscription]?, [String]?, NSError?) -> Void)? { get set }
+    var modifySubscriptionsCompletionBlock: (([Subscription]?, [String]?, Error?) -> Void)? { get set }
 }
 
 /// A generic protocol which exposes the properties used by Apple's CKQueryOperation.
@@ -285,7 +285,7 @@ public protocol CKQueryOperationType: CKDatabaseOperationType, CKResultsLimit, C
     var recordFetchedBlock: ((Record) -> Void)? { get set }
 
     /// - returns: the query completion block
-    var queryCompletionBlock: ((QueryCursor?, NSError?) -> Void)? { get set }
+    var queryCompletionBlock: ((QueryCursor?, Error?) -> Void)? { get set }
 }
 
 
@@ -417,6 +417,7 @@ extension CKFetchSubscriptionsOperation: CKFetchSubscriptionsOperationType, Asso
 }
 
 extension CKModifyRecordZonesOperation: CKModifyRecordZonesOperationType, AssociatedErrorType, BatchModifyOperationType {
+
 
     // The associated error type
     public typealias Error = ModifyRecordZonesError<RecordZone, RecordZoneID>

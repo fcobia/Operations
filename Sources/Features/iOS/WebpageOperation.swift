@@ -35,8 +35,8 @@ public class WebpageOperation<From: PresentingViewController>: ComposedOperation
         addCondition(MutuallyExclusive<UIViewController>())
     }
 
-    // Annotated to be private so a consumer needs to call init(_:, displayControllerFrom:) because a URL is needed.
-    override private init(operation composed: UIOperation<SFSafariViewController, From>) {
+    // Annotated to be fileprivate so a consumer needs to call init(_:, displayControllerFrom:) because a URL is needed.
+    override fileprivate init(operation composed: UIOperation<SFSafariViewController, From>) {
         super.init(operation: composed)
     }
 

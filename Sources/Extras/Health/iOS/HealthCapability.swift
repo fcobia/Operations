@@ -90,9 +90,9 @@ public protocol HealthCapabilityRegistrarType: CapabilityRegistrarType {
      Request access given a HealthRequirement
 
      - parameter requirement: the HealthRequirement
-     - parameter completion: a (Bool, NSError?) -> Void closure
+     - parameter completion: a (Bool, Error?) -> Void closure
      */
-    func opr_requestAuthorizationForRequirement(requirement: HealthRequirement, completion: (Bool, NSError?) -> Void)
+    func opr_requestAuthorizationForRequirement(requirement: HealthRequirement, completion: (Bool, Error?) -> Void)
 }
 
 extension HKHealthStore: HealthCapabilityRegistrarType {
@@ -119,9 +119,9 @@ extension HKHealthStore: HealthCapabilityRegistrarType {
      Request access for the given HealthRequirement.
 
      - parameter requirement: the HealthRequirement
-     - parameter completion: a closure which receives a Bool and optional NSError.
+     - parameter completion: a closure which receives a Bool and optional Error.
      */
-    public func opr_requestAuthorizationForRequirement(requirement: HealthRequirement, completion: (Bool, NSError?) -> Void) {
+    public func opr_requestAuthorizationForRequirement(requirement: HealthRequirement, completion: (Bool, Error?) -> Void) {
         requestAuthorizationToShareTypes(requirement.share, readTypes: requirement.read, completion: completion)
     }
 }

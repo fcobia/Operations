@@ -16,7 +16,7 @@ class TestablePhotosRegistrar: NSObject {
     var didCheckAuthorizationStatus = false
 
     var responseStatus: PHAuthorizationStatus = .authorized
-    var accessError: NSError? = .none
+    var accessError: Error? = .none
     var didRequestAuthorization = false
 
     required override init() { }

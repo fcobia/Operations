@@ -88,7 +88,7 @@ public protocol OperationCondition {
     func evaluateForOperation(_ operation: Procedure, completion: (OperationConditionResult) -> Void)
 }
 
-internal func evaluateOperationConditions(_ conditions: [OperationCondition], operation: Procedure, completion: ([Error]) -> Void) {
+internal func evaluateOperationConditions(_ conditions: [OperationCondition], operation: Procedure, completion: @escaping ([Error]) -> Void) {
 
     let group = DispatchGroup()
 

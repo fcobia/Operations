@@ -25,8 +25,8 @@ public class URLSessionTaskOperation: Procedure {
 
     public let task: URLSessionTask
 
-    private var removedObserved = false
-    private let lock = Foundation.NSLock()
+    fileprivate var removedObserved = false
+    fileprivate let lock = Foundation.NSLock()
 
     public init(task: URLSessionTask) {
         assert(task.state == .suspended, "NSURLSessionTask must be suspended, not \(task.state)")
@@ -43,11 +43,11 @@ public class URLSessionTaskOperation: Procedure {
         task.resume()
     }
 
-    public override func observeValue(forKeyPath keyPath: String?, of object: AnyObject?, change: [NSKeyValueChangeKey : AnyObject]?, context: UnsafeMutablePointer<Void>?) {
+    public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [String : Any]?, context: UnsafeMutableRawPointer?) {
         guard context == &URLSessionTaskOperationKVOContext else { return }
 
         lock.withCriticalScope {
-            if object === task && keyPath == KeyPath.State.rawValue && !removedObserved {
+            if let objectTask = object as? URLSessionTask, objectTask === task && keyPath == KeyPath.State.rawValue && !removedObserved {
 
                 if case .completed = task.state {
                     finish(task.error)
@@ -66,5 +66,5 @@ public class URLSessionTaskOperation: Procedure {
 }
 
 // swiftlint:disable variable_name
-private var URLSessionTaskOperationKVOContext = 0
+fileprivate var URLSessionTaskOperationKVOContext = 0
 // swiftlint:enable variable_name

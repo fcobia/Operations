@@ -41,10 +41,10 @@ class TestDiscoverAllContactsOperation: TestCloudOperation, CKDiscoverAllContact
     typealias Error = DiscoverAllContactsError<DiscoveredUserInfo>
 
     var result: [DiscoveredUserInfo]?
-    var error: NSError?
-    var discoverAllContactsCompletionBlock: (([DiscoveredUserInfo]?, NSError?) -> Void)? = .none
+    var error: Error?
+    var discoverAllContactsCompletionBlock: (([DiscoveredUserInfo]?, Error?) -> Void)? = .none
 
-    init(result: [DiscoveredUserInfo]? = .none, error: NSError? = .none) {
+    init(result: [DiscoveredUserInfo]? = .none, error: Error? = .none) {
         self.result = result
         self.error = error
         super.init()
@@ -62,10 +62,10 @@ class TestDiscoverUserInfosOperation: TestCloudOperation, CKDiscoverUserInfosOpe
     var userRecordIDs: [RecordID]?
     var userInfosByEmailAddress: [String: DiscoveredUserInfo]?
     var userInfoByRecordID: [RecordID: DiscoveredUserInfo]?
-    var error: NSError?
-    var discoverUserInfosCompletionBlock: (([String: DiscoveredUserInfo]?, [RecordID: DiscoveredUserInfo]?, NSError?) -> Void)?
+    var error: Error?
+    var discoverUserInfosCompletionBlock: (([String: DiscoveredUserInfo]?, [RecordID: DiscoveredUserInfo]?, Error?) -> Void)?
 
-    init(userInfosByEmailAddress: [String: DiscoveredUserInfo]? = .none, userInfoByRecordID: [RecordID: DiscoveredUserInfo]? = .none, error: NSError? = .none) {
+    init(userInfosByEmailAddress: [String: DiscoveredUserInfo]? = .none, userInfoByRecordID: [RecordID: DiscoveredUserInfo]? = .none, error: Error? = .none) {
         self.userInfosByEmailAddress = userInfosByEmailAddress
         self.userInfoByRecordID = userInfoByRecordID
         self.error = error
@@ -81,16 +81,16 @@ class TestFetchNotificationChangesOperation: TestCloudOperation, CKFetchNotifica
 
     typealias Error = FetchNotificationChangesError<ServerChangeToken>
 
-    var error: NSError?
+    var error: Error?
     var finalPreviousServerChangeToken: ServerChangeToken?
     var changedNotifications: [Notification]? = .none
     var previousServerChangeToken: ServerChangeToken? = .none
     var resultsLimit: Int = 100
     var moreComing: Bool = false
     var notificationChangedBlock: ((Notification) -> Void)? = .none
-    var fetchNotificationChangesCompletionBlock: ((ServerChangeToken?, NSError?) -> Void)? = .none
+    var fetchNotificationChangesCompletionBlock: ((ServerChangeToken?, Error?) -> Void)? = .none
 
-    init(token: ServerChangeToken? = .none, error: NSError? = .none) {
+    init(token: ServerChangeToken? = .none, error: Error? = .none) {
         self.finalPreviousServerChangeToken = token
         self.error = error
         super.init()
@@ -111,11 +111,11 @@ class TestMarkNotificationsReadOperation: TestCloudOperation, CKMarkNotification
     typealias Error = MarkNotificationsReadError<String>
 
     var notificationIDs: [String]
-    var error: NSError?
+    var error: Error?
 
-    var markNotificationsReadCompletionBlock: (([String]?, NSError?) -> Void)?
+    var markNotificationsReadCompletionBlock: (([String]?, Error?) -> Void)?
 
-    init(markIDsToRead: [String] = [], error: NSError? = .none) {
+    init(markIDsToRead: [String] = [], error: Error? = .none) {
         self.notificationIDs = markIDsToRead
         self.error = error
         super.init()
@@ -131,11 +131,11 @@ class TestModifyBadgeOperation: TestCloudOperation, CKModifyBadgeOperationType, 
     typealias Error = CloudKitError
 
     var badgeValue: Int
-    var error: NSError?
+    var error: Error?
 
-    var modifyBadgeCompletionBlock: ((NSError?) -> Void)?
+    var modifyBadgeCompletionBlock: ((Error?) -> Void)?
 
-    init(value: Int = 0, error: NSError? = .none) {
+    init(value: Int = 0, error: Error? = .none) {
         self.badgeValue = value
         self.error = error
     }
@@ -150,14 +150,14 @@ class TestFetchRecordChangesOperation: TestDatabaseOperation, CKFetchRecordChang
 
     var token: String?
     var data: Data?
-    var error: NSError?
+    var error: Error?
 
     var recordZoneID: RecordZoneID = "zone-id"
     var recordChangedBlock: ((Record) -> Void)? = .none
     var recordWithIDWasDeletedBlock: ((RecordID) -> Void)? = .none
-    var fetchRecordChangesCompletionBlock: ((ServerChangeToken?, Data?, NSError?) -> Void)? = .none
+    var fetchRecordChangesCompletionBlock: ((ServerChangeToken?, Data?, Error?) -> Void)? = .none
 
-    init(token: String? = "new-token", data: Data? = .none, error: NSError? = .none) {
+    init(token: String? = "new-token", data: Data? = .none, error: Error? = .none) {
         self.token = token
         self.data = data
         self.error = error
@@ -173,12 +173,12 @@ class TestFetchRecordZonesOperation: TestDatabaseOperation, CKFetchRecordZonesOp
     typealias Error = FetchRecordZonesError<RecordZone, RecordZoneID>
 
     var zonesByID: [RecordZoneID: RecordZone]?
-    var error: NSError?
+    var error: Error?
 
     var recordZoneIDs: [RecordZoneID]?
-    var fetchRecordZonesCompletionBlock: (([RecordZoneID: RecordZone]?, NSError?) -> Void)?
+    var fetchRecordZonesCompletionBlock: (([RecordZoneID: RecordZone]?, Error?) -> Void)?
 
-    init(zonesByID: [RecordZoneID: RecordZone]? = .none, error: NSError? = .none) {
+    init(zonesByID: [RecordZoneID: RecordZone]? = .none, error: Error? = .none) {
         self.zonesByID = zonesByID
         self.error = error
         super.init()
@@ -193,14 +193,14 @@ class TestFetchRecordsOperation: TestDatabaseOperation, CKFetchRecordsOperationT
     typealias Error = FetchRecordsError<Record, RecordID>
 
     var recordsByID: [RecordID: Record]?
-    var error: NSError?
+    var error: Error?
 
     var recordIDs: [RecordID]?
     var perRecordProgressBlock: ((RecordID, Double) -> Void)?
-    var perRecordCompletionBlock: ((Record?, RecordID?, NSError?) -> Void)?
-    var fetchRecordsCompletionBlock: (([RecordID: Record]?, NSError?) -> Void)?
+    var perRecordCompletionBlock: ((Record?, RecordID?, Error?) -> Void)?
+    var fetchRecordsCompletionBlock: (([RecordID: Record]?, Error?) -> Void)?
 
-    init(recordsByID: [RecordID: Record]? = .none, error: NSError? = .none) {
+    init(recordsByID: [RecordID: Record]? = .none, error: Error? = .none) {
         self.recordsByID = recordsByID
         self.error = error
         super.init()
@@ -216,12 +216,12 @@ class TestFetchSubscriptionsOperation: TestDatabaseOperation, CKFetchSubscriptio
     typealias Error = FetchSubscriptionsError<Subscription>
 
     var subscriptionsByID: [String: Subscription]?
-    var error: NSError?
+    var error: Error?
 
     var subscriptionIDs: [String]?
-    var fetchSubscriptionCompletionBlock: (([String: Subscription]?, NSError?) -> Void)?
+    var fetchSubscriptionCompletionBlock: (([String: Subscription]?, Error?) -> Void)?
 
-    init(subscriptionsByID: [String: Subscription]? = .none, error: NSError? = .none) {
+    init(subscriptionsByID: [String: Subscription]? = .none, error: Error? = .none) {
         self.subscriptionsByID = subscriptionsByID
         self.error = error
         super.init()
@@ -237,13 +237,13 @@ class TestModifyRecordZonesOperation: TestDatabaseOperation, CKModifyRecordZones
 
     var saved: [RecordZone]?
     var deleted: [RecordZoneID]?
-    var error: NSError?
+    var error: Error?
 
     var recordZonesToSave: [RecordZone]?
     var recordZoneIDsToDelete: [RecordZoneID]?
-    var modifyRecordZonesCompletionBlock: (([RecordZone]?, [RecordZoneID]?, NSError?) -> Void)?
+    var modifyRecordZonesCompletionBlock: (([CKRecordZone]?, [CKRecordZoneID]?, Error?) -> Void)?
 
-    init(saved: [RecordZone]? = .none, deleted: [RecordZoneID]? = .none, error: NSError? = .none) {
+    init(saved: [RecordZone]? = .none, deleted: [RecordZoneID]? = .none, error: Error? = .none) {
         self.saved = saved
         self.deleted = deleted
         self.error = error
@@ -260,7 +260,7 @@ class TestModifyRecordsOperation: TestDatabaseOperation, CKModifyRecordsOperatio
 
     var saved: [Record]?
     var deleted: [RecordID]?
-    var error: NSError?
+    var error: Error?
 
     var recordsToSave: [Record]?
     var recordIDsToDelete: [RecordID]?
@@ -269,10 +269,10 @@ class TestModifyRecordsOperation: TestDatabaseOperation, CKModifyRecordsOperatio
     var atomic: Bool = true
 
     var perRecordProgressBlock: ((Record, Double) -> Void)?
-    var perRecordCompletionBlock: ((Record?, NSError?) -> Void)?
-    var modifyRecordsCompletionBlock: (([Record]?, [RecordID]?, NSError?) -> Void)?
+    var perRecordCompletionBlock: ((Record?, Error?) -> Void)?
+    var modifyRecordsCompletionBlock: (([Record]?, [RecordID]?, Error?) -> Void)?
 
-    init(saved: [Record]? = .none, deleted: [RecordID]? = .none, error: NSError? = .none) {
+    init(saved: [Record]? = .none, deleted: [RecordID]? = .none, error: Error? = .none) {
         self.saved = saved
         self.deleted = deleted
         self.error = error
@@ -290,13 +290,13 @@ class TestModifySubscriptionsOperation: TestDatabaseOperation, CKModifySubscript
 
     var saved: [Subscription]?
     var deleted: [String]?
-    var error: NSError?
+    var error: Error?
 
     var subscriptionsToSave: [Subscription]?
     var subscriptionIDsToDelete: [String]?
-    var modifySubscriptionsCompletionBlock: (([Subscription]?, [String]?, NSError?) -> Void)?
+    var modifySubscriptionsCompletionBlock: (([Subscription]?, [String]?, Error?) -> Void)?
 
-    init(saved: [Subscription]? = .none, deleted: [String]? = .none, error: NSError? = .none) {
+    init(saved: [Subscription]? = .none, deleted: [String]? = .none, error: Error? = .none) {
         self.saved = saved
         self.deleted = deleted
         self.error = error
@@ -311,15 +311,15 @@ class TestModifySubscriptionsOperation: TestDatabaseOperation, CKModifySubscript
 class TestQueryOperation: TestDatabaseOperation, CKQueryOperationType, AssociatedErrorType {
     typealias Error = QueryError<QueryCursor>
 
-    var error: NSError?
+    var error: Error?
 
     var query: Query?
     var cursor: QueryCursor?
     var zoneID: RecordZoneID?
     var recordFetchedBlock: ((Record) -> Void)?
-    var queryCompletionBlock: ((QueryCursor?, NSError?) -> Void)?
+    var queryCompletionBlock: ((QueryCursor?, Error?) -> Void)?
 
-    init(error: NSError? = .none) {
+    init(error: Error? = .none) {
         self.error = error
         super.init()
     }
@@ -477,7 +477,7 @@ class OPRCKDiscoverAllContactsOperationTests: CKTests {
     }
 
     func test__error_without_completion_block() {
-        target.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+        target.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
         waitForOperation(operation)
         XCTAssertTrue(operation.isFinished)
         XCTAssertEqual(operation.errors.count, 0)
@@ -498,7 +498,7 @@ class OPRCKDiscoverAllContactsOperationTests: CKTests {
 
     func test__error_with_completion_block() {
 
-        target.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+        target.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
         operation.setDiscoverAllContactsCompletionBlock { userInfos in
             // etc
         }
@@ -568,7 +568,7 @@ class OPRCKDiscoverUserInfosOperationTests: CKTests {
     }
 
     func test__error_with_completion_block() {
-        target.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+        target.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
 
         operation.setDiscoverUserInfosCompletionBlock { _, _ in }
 
@@ -625,7 +625,7 @@ class OPRCKFetchNotificationChangesOperationTests: CKTests {
     }
 
     func test__error_with_completion_block() {
-        target.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+        target.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
 
         operation.setFetchNotificationChangesCompletionBlock { _ in }
 
@@ -673,7 +673,7 @@ class OPRCKMarkNotificationsReadOperationTests: CKTests {
     }
 
     func test__error_with_completion_block() {
-        target.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+        target.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
 
         operation.setMarkNotificationReadCompletionBlock { _ in }
 
@@ -721,7 +721,7 @@ class OPRCKModifyBadgeOperationTests: CKTests {
     }
 
     func test__error_with_completion_block() {
-        target.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+        target.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
 
         operation.setModifyBadgeCompletionBlock { _ in }
 
@@ -789,7 +789,7 @@ class OPRCKFetchRecordChangesOperationTests: CKTests {
     }
 
     func test__error_with_completion_block() {
-        target.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+        target.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
 
         operation.setFetchRecordChangesCompletionBlock { _, _ in }
 
@@ -836,7 +836,7 @@ class OPRCKFetchRecordZonesOperationTests: CKTests {
     }
 
     func test__error_with_completion_block() {
-        target.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+        target.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
 
         operation.setFetchRecordZonesCompletionBlock { _ in }
 
@@ -902,7 +902,7 @@ class OPRCKFetchRecordsOperationTests: CKTests {
     }
 
     func test__error_with_completion_block() {
-        target.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+        target.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
 
         operation.setFetchRecordsCompletionBlock { _ in
             // etc
@@ -950,7 +950,7 @@ class OPRCKFetchSubscriptionsOperationTests: CKTests {
     }
 
     func test__error_with_completion_block() {
-        target.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+        target.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
 
         operation.setFetchSubscriptionCompletionBlock { _ in }
 
@@ -1008,7 +1008,7 @@ class OPRCKModifyRecordZonesOperationTests: CKTests {
     }
 
     func test__error_with_completion_block() {
-        target.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+        target.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
 
         operation.setModifyRecordZonesCompletionBlock { _ in }
 
@@ -1118,7 +1118,7 @@ class OPRCKModifyRecordsOperationTests: CKTests {
     }
 
     func test__error_with_completion_block() {
-        target.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+        target.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
 
         operation.setModifyRecordsCompletionBlock { _ in }
 
@@ -1176,7 +1176,7 @@ class OPRCKModifySubscriptionsOperationTests: CKTests {
     }
 
     func test__error_with_completion_block() {
-        target.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+        target.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
 
         operation.setModifySubscriptionsCompletionBlock { _ in }
 
@@ -1256,7 +1256,7 @@ class OPRCKQueryOperationTests: CKTests {
     }
 
     func test__error_with_completion_block() {
-        target.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+        target.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
 
         operation.setQueryCompletionBlock { _ in }
 
@@ -1305,7 +1305,7 @@ class CloudKitOperationDiscoverAllContractsTests: CKTests {
     func test__error_without_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestDiscoverAllContactsOperation(result: [])
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
         waitForOperation(operation)
@@ -1317,7 +1317,7 @@ class CloudKitOperationDiscoverAllContractsTests: CKTests {
 
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestDiscoverAllContactsOperation(result: [])
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
         operation.setDiscoverAllContactsCompletionBlock { _ in }
@@ -1334,7 +1334,7 @@ class CloudKitOperationDiscoverAllContractsTests: CKTests {
             let op = TestDiscoverAllContactsOperation(result: [])
             if shouldError {
                 let userInfo = [CKErrorRetryAfterKey: NSNumber(value: 0.001)]
-                op.error = NSError(
+                op.error = Error(
                     domain: CKErrorDomain,
                     code: CKErrorCode.serviceUnavailable.rawValue,
                     userInfo: userInfo
@@ -1357,7 +1357,7 @@ class CloudKitOperationDiscoverAllContractsTests: CKTests {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestDiscoverAllContactsOperation(result: [])
             if shouldError {
-                op.error = NSError(
+                op.error = Error(
                     domain: CKErrorDomain,
                     code: CKErrorCode.zoneBusy.rawValue,
                     userInfo: nil
@@ -1380,7 +1380,7 @@ class CloudKitOperationDiscoverAllContractsTests: CKTests {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestDiscoverAllContactsOperation(result: [])
             if shouldError {
-                op.error = NSError(
+                op.error = Error(
                     domain: CKErrorDomain,
                     code: CKErrorCode.limitExceeded.rawValue,
                     userInfo: nil
@@ -1408,7 +1408,7 @@ class CloudKitOperationDiscoverAllContractsTests: CKTests {
     func test__error_which_is_not_cloud_kit_error() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestDiscoverAllContactsOperation(result: [])
-            op.error = NSError(
+            op.error = Error(
                 domain: CNErrorDomain,
                 code: CNErrorCode.recordDoesNotExist.rawValue,
                 userInfo: nil
@@ -1495,7 +1495,7 @@ class CloudKitOperationDiscoverUserInfosOperationTests: CKTests {
     func test__error_without_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestDiscoverUserInfosOperation(userInfosByEmailAddress: [:], userInfoByRecordID: [:])
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
 
@@ -1507,7 +1507,7 @@ class CloudKitOperationDiscoverUserInfosOperationTests: CKTests {
     func test__error_with_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestDiscoverUserInfosOperation(userInfosByEmailAddress: [:], userInfoByRecordID: [:])
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
         operation.setDiscoverUserInfosCompletionBlock { _ in }
@@ -1566,7 +1566,7 @@ class CloudKitOperationFetchNotificationChangesOperationTests: CKTests {
     func test__error_without_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestFetchNotificationChangesOperation(token: "i'm a server token")
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
 
@@ -1578,7 +1578,7 @@ class CloudKitOperationFetchNotificationChangesOperationTests: CKTests {
     func test__error_with_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestFetchNotificationChangesOperation(token: "i'm a server token")
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
         operation.setFetchNotificationChangesCompletionBlock { _ in }
@@ -1625,7 +1625,7 @@ class CloudKitOperationMarkNotificationsReadOperationTests: CKTests {
     func test__error_without_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestMarkNotificationsReadOperation()
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
 
@@ -1637,7 +1637,7 @@ class CloudKitOperationMarkNotificationsReadOperationTests: CKTests {
     func test__error_with_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestMarkNotificationsReadOperation()
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
         operation.setMarkNotificationReadCompletionBlock { _ in }
@@ -1683,7 +1683,7 @@ class CloudKitOperationModifyBadgeCompletionTests: CKTests {
     func test__error_without_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestModifyBadgeOperation()
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
 
@@ -1695,7 +1695,7 @@ class CloudKitOperationModifyBadgeCompletionTests: CKTests {
     func test__error_with_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestModifyBadgeOperation()
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
         operation.setModifyBadgeCompletionBlock { _ in }
@@ -1773,7 +1773,7 @@ class CloudKitOperationFetchRecordChangesTests: CKTests {
     func test__error_without_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestFetchRecordChangesOperation()
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
 
@@ -1785,7 +1785,7 @@ class CloudKitOperationFetchRecordChangesTests: CKTests {
     func test__error_with_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestFetchRecordChangesOperation()
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
         operation.setFetchRecordChangesCompletionBlock { _ in }
@@ -1832,7 +1832,7 @@ class CloudKitOperationFetchRecordZonesTests: CKTests {
     func test__error_without_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestFetchRecordZonesOperation()
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
 
@@ -1844,7 +1844,7 @@ class CloudKitOperationFetchRecordZonesTests: CKTests {
     func test__error_with_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestFetchRecordZonesOperation()
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
         operation.setFetchRecordZonesCompletionBlock { _ in }
@@ -1895,7 +1895,7 @@ class CloudKitOperationFetchRecordsTests: CKTests {
     func test__error_without_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestFetchRecordsOperation()
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
 
@@ -1907,7 +1907,7 @@ class CloudKitOperationFetchRecordsTests: CKTests {
     func test__error_with_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestFetchRecordsOperation()
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
         operation.setFetchRecordsCompletionBlock { _ in }
@@ -1954,7 +1954,7 @@ class CloudKitOperationFetchSubscriptionsTests: CKTests {
     func test__error_without_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestFetchSubscriptionsOperation()
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
 
@@ -1966,7 +1966,7 @@ class CloudKitOperationFetchSubscriptionsTests: CKTests {
     func test__error_with_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestFetchSubscriptionsOperation()
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
         operation.setFetchSubscriptionCompletionBlock { _ in }
@@ -2017,7 +2017,7 @@ class CloudKitOperationModifyRecordZonesTests: CKTests {
     func test__error_without_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestModifyRecordZonesOperation()
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
 
@@ -2029,7 +2029,7 @@ class CloudKitOperationModifyRecordZonesTests: CKTests {
     func test__error_with_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestModifyRecordZonesOperation()
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
         operation.setModifyRecordZonesCompletionBlock { _ in }
@@ -2097,7 +2097,7 @@ class CloudKitOperationModifyRecordsTests: CKTests {
     func test__error_without_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestModifyRecordsOperation()
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
 
@@ -2109,7 +2109,7 @@ class CloudKitOperationModifyRecordsTests: CKTests {
     func test__error_with_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestModifyRecordsOperation()
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
         operation.setModifyRecordsCompletionBlock { _ in }
@@ -2161,7 +2161,7 @@ class CloudKitOperationModifySubscriptionsTests: CKTests {
     func test__error_without_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestModifySubscriptionsOperation()
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
 
@@ -2173,7 +2173,7 @@ class CloudKitOperationModifySubscriptionsTests: CKTests {
     func test__error_with_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestModifySubscriptionsOperation()
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
         operation.setModifySubscriptionsCompletionBlock { _, _ in }
@@ -2230,7 +2230,7 @@ class CloudKitOperationQueryTests: CKTests {
     func test__error_without_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestQueryOperation()
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
 
@@ -2242,7 +2242,7 @@ class CloudKitOperationQueryTests: CKTests {
     func test__error_with_completion_block() {
         operation = CloudKitOperation(strategy: .immediate) {
             let op = TestQueryOperation()
-            op.error = NSError(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
+            op.error = Error(domain: CKErrorDomain, code: CKErrorCode.internalError.rawValue, userInfo: nil)
             return op
         }
         operation.setQueryCompletionBlock { _ in }
@@ -2260,7 +2260,7 @@ class BatchedFetchNotificationChangesOperationTests: CKTests {
     typealias Target = TestFetchNotificationChangesOperation
 
     var token: String!
-    var error: NSError?
+    var error: Error?
     var numberOfBatches: Int = 3
     var count: Int = 0
     var operation: BatchedCloudKitOperation<Target>!
@@ -2396,7 +2396,7 @@ class CloudKitRecoveryTests: CKTests {
 
     func test__extract_cloud_kit_errors__with_single_cloud_kit_error() {
         let errors: [ErrorProtocol] = [
-            CloudKitError(error: NSError(domain: CKErrorDomain, code: CKErrorCode.notAuthenticated.rawValue, userInfo: nil))
+            CloudKitError(error: Error(domain: CKErrorDomain, code: CKErrorCode.notAuthenticated.rawValue, userInfo: nil))
         ]
         let info = createInfoWithErrors(errors)
         guard let (code, _) = recovery.cloudKitErrorsFromInfo(info) else {
@@ -2409,9 +2409,9 @@ class CloudKitRecoveryTests: CKTests {
     func test__extract_cloud_kit_errors__with_mixture_cloud_kit_errors() {
         let errors: [ErrorProtocol] = [
             // This is actually a Contacts error code
-            NSError(domain: CNErrorDomain, code: CNErrorCode.recordDoesNotExist.rawValue, userInfo: nil),
-            CloudKitError(error: NSError(domain: CKErrorDomain, code: CKErrorCode.missingEntitlement.rawValue, userInfo: nil)),
-            CloudKitError(error: NSError(domain: CKErrorDomain, code: CKErrorCode.notAuthenticated.rawValue, userInfo: nil))
+            Error(domain: CNErrorDomain, code: CNErrorCode.recordDoesNotExist.rawValue, userInfo: nil),
+            CloudKitError(error: Error(domain: CKErrorDomain, code: CKErrorCode.missingEntitlement.rawValue, userInfo: nil)),
+            CloudKitError(error: Error(domain: CKErrorDomain, code: CKErrorCode.notAuthenticated.rawValue, userInfo: nil))
         ]
 
         let info = createInfoWithErrors(errors)

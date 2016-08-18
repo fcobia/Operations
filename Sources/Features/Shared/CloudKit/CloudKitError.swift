@@ -10,10 +10,10 @@ import Foundation
 import CloudKit
 
 /// An error type for CloudKit errors.
-public protocol CloudKitErrorType: ErrorProtocol {
+public protocol CloudKitErrorType: Error {
 
-    /// - returns: the original NSError received from CloudKit
-    var underlyingError: NSError { get }
+    /// - returns: the original Error received from CloudKit
+    var underlyingError: Error { get }
 
     /// - returns: an operation Delay, used to indicate how long to wait until retry
     var retryAfterDelay: Delay? { get }
@@ -21,7 +21,7 @@ public protocol CloudKitErrorType: ErrorProtocol {
 
 public extension CloudKitErrorType {
 
-    var code: CKErrorCode? {
+    var code: CKError.Code? {
         return CKErrorCode(rawValue: underlyingError.code)
     }
 
@@ -46,9 +46,9 @@ public protocol CloudKitBatchProcessErrorType: CloudKitErrorType {
 
 public struct CloudKitError: CloudKitErrorType {
 
-    public let underlyingError: NSError
+    public let underlyingError: Error
 
-    init(error: NSError) {
+    init(error: Error) {
         underlyingError = error
     }
 }
@@ -96,7 +96,7 @@ public extension CloudKitOperation where T: BatchModifyOperationType, T.Save == 
     typealias ToModify = (toSave: [T.Save]?, toDelete: [T.Delete]?)
     typealias ToModifyResponse = (left: ToModify, right: ToModify)
 
-    func setErrorHandlerForLimitExceeded(_ handler: (error: T.Error, log: LoggerType, suggested: ToModifyResponse) -> ToModifyResponse? = { $2 }) {
+    func setErrorHandlerForLimitExceeded(_ handler: @escaping (_ error: T.Error, _ log: LoggerType, _ suggested: ToModifyResponse) -> ToModifyResponse? = { $2 }) {
         setErrorHandlerForCode(.limitExceeded) { [unowned self] operation, error, log, suggested in
 
             log.warning("Received CloudKit Limit Exceeded error: \(error)")
@@ -146,7 +146,7 @@ public extension CloudKitOperation where T: BatchProcessOperationType, T.Process
 
     typealias ToProcessResponse = (left: [T.Process]?, right: [T.Process]?)
 
-    func setErrorHandlerForLimitExceeded(_ handler: (error: T.Error, log: LoggerType, suggested: ToProcessResponse) -> ToProcessResponse? = { $2 }) {
+    func setErrorHandlerForLimitExceeded(_ handler: @escaping (_ error: T.Error, _ log: LoggerType, _ suggested: ToProcessResponse) -> ToProcessResponse? = { $2 }) {
         setErrorHandlerForCode(.limitExceeded) { [unowned self] operation, error, log, suggested in
 
             log.warning("Received CloudKit Limit Exceeded error: \(error)")

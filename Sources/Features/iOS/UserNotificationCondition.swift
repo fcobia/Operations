@@ -25,8 +25,8 @@ extension UIApplication: UserNotificationRegistrarType {
 }
 
 // swiftlint:disable variable_name
-private let DidRegisterSettingsNotificationName = "DidRegisterSettingsNotificationName"
-private let NotificationSettingsKey = "NotificationSettingsKey"
+fileprivate let DidRegisterSettingsNotificationName = "DidRegisterSettingsNotificationName"
+fileprivate let NotificationSettingsKey = "NotificationSettingsKey"
 // swiftlint:enable variable_name
 
 /**
@@ -81,7 +81,7 @@ public final class UserNotificationCondition: Condition {
         addDependency(UserNotificationPermissionOperation(settings: settings, behavior: behavior, registrar: registrar))
     }
 
-    public override func evaluate(_ operation: Procedure, completion: (OperationConditionResult) -> Void) {
+    public override func evaluate(_ operation: Procedure, completion: @escaping (OperationConditionResult) -> Void) {
         if let current = registrar.opr_currentUserNotificationSettings() {
 
             switch (current, settings) {

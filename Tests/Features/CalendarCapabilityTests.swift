@@ -17,7 +17,7 @@ class TestableEventsRegistrar: NSObject {
 
     var responseStatus: EKAuthorizationStatus = .authorized
     var accessAllowed: Bool = true
-    var accessError: NSError? = .none
+    var accessError: Error? = .none
     var didRequestAuthorization: EKEntityType? = .none
 
     required override init() { }

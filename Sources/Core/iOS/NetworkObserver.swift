@@ -49,20 +49,20 @@ public class NetworkObserver: OperationWillExecuteObserver, OperationDidFinishOb
     }
 }
 
-private class NetworkIndicatorController {
+fileprivate class NetworkIndicatorController {
 
     static let sharedInstance = NetworkIndicatorController()
 
-    private var activityCount = 0
-    private var visibilityTimer: Timer?
+    fileprivate var activityCount = 0
+    fileprivate var visibilityTimer: Timer?
 
     var networkActivityIndicator: NetworkActivityIndicatorInterface = UIApplication.shared
 
-    private init() {
+    fileprivate init() {
         // Prevents use outside of the shared instance.
     }
 
-    private func updateIndicatorVisibility() {
+    fileprivate func updateIndicatorVisibility() {
         if activityCount > 0 && networkActivityIndicator.networkActivityIndicatorVisible == false {
             networkIndicatorShouldShow(true)
         }
@@ -73,7 +73,7 @@ private class NetworkIndicatorController {
         }
     }
 
-    private func networkIndicatorShouldShow(_ shouldShow: Bool) {
+    fileprivate func networkIndicatorShouldShow(_ shouldShow: Bool) {
         visibilityTimer?.cancel()
         visibilityTimer = .none
         networkActivityIndicator.networkActivityIndicatorVisible = shouldShow
@@ -94,11 +94,11 @@ private class NetworkIndicatorController {
     }
 }
 
-private struct Timer {
+fileprivate struct Timer {
 
-    private var isCancelled = false
+    fileprivate var isCancelled = false
 
-    init(interval: TimeInterval, handler: () -> ()) {
+    init(interval: TimeInterval, handler: @escaping () -> ()) {
         let after = DispatchTime.now() + interval
         Queue.main.queue.asyncAfter(deadline: after) { [isCancelled] in
             if isCancelled != true {

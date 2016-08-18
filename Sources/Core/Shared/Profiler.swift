@@ -319,11 +319,11 @@ struct PrintableProfileResult: CustomStringConvertible {
     }
 
     func createIndentation() -> String {
-        return String(repeating: " " as UnicodeScalar, count: indentation)
+        return String(repeating: " ", count: indentation)
     }
 
     func createSpacing() -> String {
-        return String(repeating: " " as UnicodeScalar, count: spacing)
+        return String(repeating: " ", count: spacing)
     }
 }
 

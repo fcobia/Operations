@@ -30,10 +30,10 @@ public struct CloudStatus: AuthorizationStatusType {
     /// - returns: the CKApplicationPermissionStatus?
     public let permissions: CKApplicationPermissionStatus?
 
-    /// - returns: any NSError?
-    public let error: NSError?
+    /// - returns: any Error?
+    public let error: Error?
 
-    init(account: CKAccountStatus, permissions: CKApplicationPermissionStatus? = .none, error: NSError? = .none) {
+    init(account: CKAccountStatus, permissions: CKApplicationPermissionStatus? = .none, error: Error? = .none) {
         self.account = account
         self.permissions = permissions
         self.error = error
@@ -84,7 +84,7 @@ public protocol CloudContainerRegistrarType: CapabilityRegistrarType {
 
      - parameter completionHandler: a completion handler which receives the account status.
      */
-    func opr_accountStatusWithCompletionHandler(_ completionHandler: (CKAccountStatus, NSError?) -> Void)
+    func opr_accountStatusWithCompletionHandler(_ completionHandler: (CKAccountStatus, Error?) -> Void)
 
     /**
      Get the application permission, a CKApplicationPermissions.
@@ -174,7 +174,7 @@ public class CloudCapability: NSObject, CapabilityType {
      Get the current authorization status of CloudKit from the Registrar.
      - parameter completion: a CloudStatus -> Void closure.
      */
-    public func authorizationStatus(_ completion: (CloudStatus) -> Void) {
+    public func authorizationStatus(_ completion: @escaping (CloudStatus) -> Void) {
         verifyAccountStatus(completion: completion)
     }
 
@@ -182,13 +182,13 @@ public class CloudCapability: NSObject, CapabilityType {
      Requests authorization to the Cloud Kit container from the Registrar.
      - parameter completion: a dispatch_block_t
      */
-    public func requestAuthorizationWithCompletion(_ completion: ()->()) {
+    public func requestAuthorizationWithCompletion(_ completion: @escaping ()->()) {
         verifyAccountStatus(true) { _ in
             completion()
         }
     }
 
-    func verifyAccountStatus(_ shouldRequest: Bool = false, completion: (CloudStatus) -> Void) {
+    func verifyAccountStatus(_ shouldRequest: Bool = false, completion: @escaping (CloudStatus) -> Void) {
         registrar.opr_accountStatusWithCompletionHandler { status, error in
             switch (status, self.hasRequirements) {
             case (.available, true):
@@ -199,7 +199,7 @@ public class CloudCapability: NSObject, CapabilityType {
         }
     }
 
-    func verifyPermissions(_ shouldRequest: Bool = false, completion: (CloudStatus) -> Void) {
+    func verifyPermissions(_ shouldRequest: Bool = false, completion: @escaping (CloudStatus) -> Void) {
         registrar.opr_statusForApplicationPermission(requirement) { status, error in
             switch (status, shouldRequest) {
             case (.initialState, true):
@@ -210,7 +210,7 @@ public class CloudCapability: NSObject, CapabilityType {
         }
     }
 
-    func requestPermissionsWithCompletion(_ completion: (CloudStatus) -> Void) {
+    func requestPermissionsWithCompletion(_ completion: @escaping (CloudStatus) -> Void) {
         Queue.main.queue.async {
             self.registrar.opr_requestApplicationPermission(self.requirement) { status, error in
                 completion(CloudStatus(account: .available, permissions: status, error: error))
@@ -243,7 +243,7 @@ public final class CloudContainerRegistrar: NSObject, CloudContainerRegistrarTyp
 
      - parameter completionHandler: a completion handler which receives the account status.
      */
-    public func opr_accountStatusWithCompletionHandler(_ completionHandler: (CKAccountStatus, NSError?) -> Void) {
+    public func opr_accountStatusWithCompletionHandler(_ completionHandler: (CKAccountStatus, Error?) -> Void) {
         cloudKitContainer.accountStatus(completionHandler: completionHandler)
     }
 

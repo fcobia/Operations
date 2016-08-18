@@ -91,7 +91,7 @@ class TestableContactsStore: ContactStoreType {
     var groupsMatchingPredicate = Dictionary<GroupPredicate, [CNGroup]>()
 
     var requestedEntityType: CNEntityType? = .none
-    var accessError: NSError? = .none
+    var accessError: Error? = .none
 
     var status: CNAuthorizationStatus
     let accessRequestShouldSucceed: Bool
@@ -112,7 +112,7 @@ class TestableContactsStore: ContactStoreType {
         return status
     }
 
-    func opr_requestAccessForEntityType(_ entityType: CNEntityType, completion: (Bool, NSError?) -> Void) {
+    func opr_requestAccessForEntityType(_ entityType: CNEntityType, completion: (Bool, Error?) -> Void) {
         didRequestAccess = true
         requestedEntityType = entityType
         if accessRequestShouldSucceed {
@@ -135,7 +135,7 @@ class TestableContactsStore: ContactStoreType {
         if let contact = contactsByIdentifier[identifier] {
             return contact
         }
-        throw NSError(domain: CNErrorDomain, code: CNErrorCode.recordDoesNotExist.rawValue, userInfo: nil)
+        throw Error(domain: CNErrorDomain, code: CNErrorCode.recordDoesNotExist.rawValue, userInfo: nil)
     }
 
     func opr_unifiedContactsMatchingPredicate(_ predicate: ContactPredicate, keysToFetch keys: [CNKeyDescriptor]) throws -> [CNContact] {
@@ -143,7 +143,7 @@ class TestableContactsStore: ContactStoreType {
         if let contacts = contactsMatchingPredicate[predicate] {
             return contacts
         }
-        throw NSError(domain: CNErrorDomain, code: CNErrorCode.recordDoesNotExist.rawValue, userInfo: nil)
+        throw Error(domain: CNErrorDomain, code: CNErrorCode.recordDoesNotExist.rawValue, userInfo: nil)
     }
 
     func opr_groupsMatchingPredicate(_ predicate: GroupPredicate?) throws -> [CNGroup] {

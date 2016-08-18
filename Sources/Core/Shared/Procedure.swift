@@ -26,7 +26,7 @@ to be notified of lifecycle events in the operation.
 */
 public class Procedure: Operation {
 
-    private enum State: Int, Comparable {
+    fileprivate enum State: Int, Comparable {
 
         // The initial state
         case initialized
@@ -82,27 +82,27 @@ public class Procedure: Operation {
     /// - returns: a unique String which can be used to identify the operation instance
     public let identifier = UUID().uuidString
 
-    private let stateLock = NSRecursiveLock()
-    private var _log = Protector<LoggerType>(Logger())
-    private var _state = State.initialized
-    private var _internalErrors = [Error]()
-    private var _isTransitioningToExecuting = false
-    private var _isHandlingFinish = false
-    private var _isHandlingCancel = false
-    private var _observers = Protector([OperationObserverType]())
-    private let disableAutomaticFinishing: Bool
+    fileprivate let stateLock = NSRecursiveLock()
+    fileprivate var _log = Protector<LoggerType>(Logger())
+    fileprivate var _state = State.initialized
+    fileprivate var _internalErrors = [Error]()
+    fileprivate var _isTransitioningToExecuting = false
+    fileprivate var _isHandlingFinish = false
+    fileprivate var _isHandlingCancel = false
+    fileprivate var _observers = Protector([OperationObserverType]())
+    fileprivate let disableAutomaticFinishing: Bool
 
-    internal private(set) var directDependencies = Set<Operation>()
-    internal private(set) var conditions = Set<Condition>()
+    internal fileprivate(set) var directDependencies = Set<Operation>()
+    internal fileprivate(set) var conditions = Set<Condition>()
 
     internal var indirectDependencies: Set<Operation> {
         return Set(conditions.flatMap { $0.directDependencies })
     }
 
     // Internal operation properties which are used to manage the scheduling of dependencies
-    internal private(set) var evaluateConditionsOperation: GroupOperation? = .none
+    internal fileprivate(set) var evaluateConditionsOperation: GroupOperation? = .none
 
-    private var _cancelled = false  // should always be set by .cancel()
+    fileprivate var _cancelled = false  // should always be set by .cancel()
 
     /// Access the internal errors collected by the Procedure
     public var errors: [Error] {
@@ -288,7 +288,7 @@ public class Procedure: Operation {
      They must call a finish methods in order to complete.
      */
     public func execute() {
-        print("\(self.dynamicType) must override `execute()`.", terminator: "")
+        print("\(type(of: self)) must override `execute()`.", terminator: "")
         finish()
     }
 
@@ -409,7 +409,7 @@ public class Procedure: Operation {
 
 public extension Procedure {
 
-    private var state: State {
+    fileprivate var state: State {
         get {
             return stateLock.withCriticalScope { _state }
         }
@@ -538,7 +538,7 @@ public extension Procedure {
 
 public extension Procedure {
 
-    private(set) var observers: [OperationObserverType] {
+    fileprivate(set) var observers: [OperationObserverType] {
         get {
             return _observers.read { $0 }
         }
@@ -687,7 +687,7 @@ public extension Procedure {
         _finish(receivedErrors, fromCancel: false)
     }
 
-    private final func _finish(_ receivedErrors: [Error], fromCancel: Bool = false) {
+    fileprivate final func _finish(_ receivedErrors: [Error], fromCancel: Bool = false) {
         let willFinish = stateLock.withCriticalScope { _ -> Bool in
             // Do not finish if already finished or finishing
             guard state <= .finishing else { return false }
@@ -766,11 +766,11 @@ public extension Procedure {
     }
 }
 
-private func < (lhs: Procedure.State, rhs: Procedure.State) -> Bool {
+fileprivate func < (lhs: Procedure.State, rhs: Procedure.State) -> Bool {
     return lhs.rawValue < rhs.rawValue
 }
 
-private func == (lhs: Procedure.State, rhs: Procedure.State) -> Bool {
+fileprivate func == (lhs: Procedure.State, rhs: Procedure.State) -> Bool {
     return lhs.rawValue == rhs.rawValue
 }
 
@@ -812,7 +812,7 @@ extension Operation {
 
     - parameter block: a Void -> Void block
     */
-    public func addCompletionBlock(_ block: (Void) -> Void) {
+    public func addCompletionBlock(_ block: @escaping (Void) -> Void) {
         if let existing = completionBlock {
             completionBlock = {
                 existing()
@@ -830,7 +830,7 @@ extension Operation {
 
     - parameter dependencies: and array of `NSOperation` instances.
     */
-    public func addDependencies<S where S: Sequence, S.Iterator.Element: Operation>(_ dependencies: S) {
+    public func addDependencies<S>(_ dependencies: S) where S: Sequence, S.Iterator.Element: Operation {
         precondition(!isExecuting && !isFinished, "Cannot modify the dependencies after the operation has started executing.")
         dependencies.forEach(addDependency)
     }
@@ -841,7 +841,7 @@ extension Operation {
 
      - parameter dependencies: and array of `NSOperation` instances.
      */
-    public func removeDependencies<S where S: Sequence, S.Iterator.Element: Operation>(_ dependencies: S) {
+    public func removeDependencies<S>(_ dependencies: S) where S: Sequence, S.Iterator.Element: Operation {
         precondition(!isExecuting && !isFinished, "Cannot modify the dependencies after the operation has started executing.")
         dependencies.forEach(removeDependency)
     }
@@ -856,7 +856,7 @@ extension Operation {
     }
 }
 
-private extension Operation {
+fileprivate extension Operation {
     enum KeyPath: String {
         case Cancelled = "isCancelled"
         case Executing = "isExecuting"
@@ -865,7 +865,7 @@ private extension Operation {
 }
 
 extension Foundation.NSLock {
-    func withCriticalScope<T>(_ block: @noescape () -> T) -> T {
+    func withCriticalScope<T>(_ block: () -> T) -> T {
         lock()
         let value = block()
         unlock()
@@ -874,7 +874,7 @@ extension Foundation.NSLock {
 }
 
 extension NSRecursiveLock {
-    func withCriticalScope<T>(_ block: @noescape () -> T) -> T {
+    func withCriticalScope<T>(_ block: () -> T) -> T {
         lock()
         let value = block()
         unlock()
@@ -904,7 +904,7 @@ extension Array where Element: Operation {
         }
     }
 
-    internal func forEachOperation(body: @noescape (Procedure) throws -> Void) rethrows {
+    internal func forEachOperation(body: (Procedure) throws -> Void) rethrows {
         try forEach {
             if let operation = $0 as? Procedure {
                 try body(operation)

@@ -46,7 +46,7 @@ public enum Queue {
     case background
 
     // swiftlint:disable variable_name
-    private var qos_attributes: DispatchQoS {
+    fileprivate var qos_attributes: DispatchQoS {
         switch self {
         case .initiated: return .userInitiated
         case .interactive: return .userInteractive
@@ -56,7 +56,7 @@ public enum Queue {
         }
     }
 
-	private var qos_global_attributes: DispatchQoS.QoSClass {
+	fileprivate var qos_global_attributes: DispatchQoS.QoSClass {
         switch self {
         case .initiated: return .userInitiated
         case .interactive: return .userInteractive

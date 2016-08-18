@@ -49,7 +49,7 @@ public class AddressBookOperation: Procedure {
 
     /*  Sub-classes may over-ride this method to perform AddressBook related
         functions before the operation finishes. */
-    public func executeAddressBookTask() -> ErrorProtocol? {
+    public func executeAddressBookTask() -> Error? {
         return .none
     }
 
@@ -61,7 +61,7 @@ public class AddressBookOperation: Procedure {
 @available(iOS, deprecated: 9.0)
 public class AddressBookGetResource: AddressBookOperation {
 
-    public enum AddressBookError: ErrorProtocol {
+    public enum AddressBookError: Swift.Error {
         case failedToGetGroup(Query?)
         case failedToGetPerson(Query?)
     }
@@ -179,7 +179,7 @@ public class AddressBookGetResource: AddressBookOperation {
         }
     }
 
-    public override func executeAddressBookTask() -> ErrorProtocol? {
+    public override func executeAddressBookTask() -> Error? {
         if let error = super.executeAddressBookTask() {
             return error
         }
@@ -192,7 +192,7 @@ public class AddressBookGetResource: AddressBookOperation {
 
     // Actions
 
-    public func addPeople(_ people: [AddressBookPerson], toGroup group: AddressBookGroup) -> ErrorProtocol? {
+    public func addPeople(_ people: [AddressBookPerson], toGroup group: AddressBookGroup) -> Error? {
 
         for person in people {
             if let error = group.add(person) {
@@ -227,14 +227,14 @@ public class AddressBookGetGroup: AddressBookGetResource {
 @available(iOS, deprecated: 9.0)
 public class AddressBookCreateGroup: AddressBookGetGroup {
 
-    public override func executeAddressBookTask() -> ErrorProtocol? {
+    public override func executeAddressBookTask() -> Error? {
         if let error = super.executeAddressBookTask() {
             return error
         }
         return createGroup()
     }
 
-    func createGroup() -> ErrorProtocol? {
+    func createGroup() -> Error? {
         if addressBookGroup == nil, let groupName = groupQuery?.name {
 
             let group = AddressBookGroup()
@@ -259,7 +259,7 @@ public class AddressBookCreateGroup: AddressBookGetGroup {
 @available(iOS, deprecated: 9.0)
 public class AddressBookRemoveGroup: AddressBookGetGroup {
 
-    func removeGroup() -> ErrorProtocol? {
+    func removeGroup() -> Error? {
         if let group = addressBookGroup {
             if let error = addressBook.removeRecord(group) {
                 return error
@@ -271,7 +271,7 @@ public class AddressBookRemoveGroup: AddressBookGetGroup {
         return .none
     }
 
-    public override func executeAddressBookTask() -> ErrorProtocol? {
+    public override func executeAddressBookTask() -> Error? {
         if let error = super.executeAddressBookTask() {
             return error
         }
@@ -295,14 +295,14 @@ public class AddressBookAddPersonToGroup: AddressBookGetResource {
         personQuery = .ID(personID)
     }
 
-    public override func executeAddressBookTask() -> ErrorProtocol? {
+    public override func executeAddressBookTask() -> Error? {
         if let error = super.executeAddressBookTask() {
             return error
         }
         return addPersonToGroup()
     }
 
-    func addPersonToGroup() -> ErrorProtocol? {
+    func addPersonToGroup() -> Error? {
 
         if let group = addressBookGroup {
             if let person = addressBookPerson {
@@ -333,14 +333,14 @@ public class AddressBookRemovePersonFromGroup: AddressBookGetResource {
         personQuery = .ID(personID)
     }
 
-    public override func executeAddressBookTask() -> ErrorProtocol? {
+    public override func executeAddressBookTask() -> Error? {
         if let error = super.executeAddressBookTask() {
             return error
         }
         return removePersonFromGroup()
     }
 
-    func removePersonFromGroup() -> ErrorProtocol? {
+    func removePersonFromGroup() -> Error? {
         if addressBookGroup == nil {
             return AddressBookError.failedToGetGroup(groupQuery)
         }
@@ -367,9 +367,9 @@ public class AddressBookRemovePersonFromGroup: AddressBookGetResource {
 public class AddressBookMapPeople<T>: AddressBookGetResource {
 
     let transform: (AddressBookPerson) -> T?
-    public private(set) var results = Array<T>()
+    public fileprivate(set) var results = Array<T>()
 
-    public init(inGroupNamed groupName: String? = .none, transform: (AddressBookPerson) -> T?) {
+    public init(inGroupNamed groupName: String? = .none, transform: @escaping (AddressBookPerson) -> T?) {
         self.transform = transform
         super.init()
         if let groupName = groupName {
@@ -377,7 +377,7 @@ public class AddressBookMapPeople<T>: AddressBookGetResource {
         }
     }
 
-    init(registrar: AddressBookPermissionRegistrar, inGroupNamed groupName: String? = .none, transform: (AddressBookPerson) -> T?) {
+    init(registrar: AddressBookPermissionRegistrar, inGroupNamed groupName: String? = .none, transform: @escaping (AddressBookPerson) -> T?) {
         self.transform = transform
         super.init(registrar: registrar)
         if let groupName = groupName {
@@ -385,14 +385,14 @@ public class AddressBookMapPeople<T>: AddressBookGetResource {
         }
     }
 
-    public override func executeAddressBookTask() -> ErrorProtocol? {
+    public override func executeAddressBookTask() -> Error? {
         if let error = super.executeAddressBookTask() {
             return error
         }
         return mapPeople()
     }
 
-    func mapPeople() -> ErrorProtocol? {
+    func mapPeople() -> Error? {
         results = addressBookPeople().flatMap { self.transform($0) }
         return .none
     }

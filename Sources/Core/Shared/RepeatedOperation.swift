@@ -63,7 +63,7 @@ public enum WaitStrategy {
     }
 }
 
-public struct RepeatedPayload<T where T: Operation> {
+public struct RepeatedPayload<T> where T: Operation {
     public typealias ConfigureBlock = (T) -> Void
 
     public let delay: Delay?
@@ -77,7 +77,7 @@ public struct RepeatedPayload<T where T: Operation> {
 
  RepeatedOperation is an GroupOperation subclass which can be used in
  conjunction with a GeneratorType to schedule NSOperation subclasses of
- the same type on a private queue.
+ the same type on a fileprivate queue.
 
  This is useful directly for periodically running idempotent operations,
  and it forms the basis for operations types which can be retried in the
@@ -132,10 +132,10 @@ public struct RepeatedPayload<T where T: Operation> {
  - See: Repeatable
 
 */
-public class RepeatedOperation<T where T: Operation>: GroupOperation {
+public class RepeatedOperation<T>: GroupOperation where T: Operation {
     public typealias Payload = RepeatedPayload<T>
 
-    private var generator: AnyIterator<Payload>
+    fileprivate var generator: AnyIterator<Payload>
 
     /// - returns: the previous operation which was executed.
     public internal(set) var previous: T? = .none
@@ -146,7 +146,7 @@ public class RepeatedOperation<T where T: Operation>: GroupOperation {
     /// - return: the count of operations that have executed.
     public internal(set) var count: Int = 1
 
-    internal private(set) var configure: Payload.ConfigureBlock = { _ in }
+    internal fileprivate(set) var configure: Payload.ConfigureBlock = { _ in }
 
     static func createPayloadGeneratorWithMaxCount(_ max: Int? = .none, generator gen: AnyIterator<Payload>) -> AnyIterator<Payload> {
         return max.map { AnyIterator(FiniteGenerator(gen, limit: $0 - 1)) } ?? gen
@@ -181,7 +181,7 @@ public class RepeatedOperation<T where T: Operation>: GroupOperation {
      - parameter delay: a generator with Delay element.
      - parameter generator: a generator with T element.
      */
-    public init<D, G where D: IteratorProtocol, D.Element == Delay, G: IteratorProtocol, G.Element == T>(maxCount max: Int? = .none, delay: D, generator gen: G) {
+    public init<D, G>(maxCount max: Int? = .none, delay: D, generator gen: G) where D: IteratorProtocol, D.Element == Delay, G: IteratorProtocol, G.Element == T {
 
         let tuple = TupleGenerator(primary: gen, secondary: delay)
         var mapped = MapGenerator(tuple) { RepeatedPayload(delay: $0.0, operation: $0.1, configure: .none) }
@@ -227,7 +227,7 @@ public class RepeatedOperation<T where T: Operation>: GroupOperation {
      - parameter strategy: a WaitStrategy which defaults to a 0.1 second fixed interval.
      - parameter generator: a generic generator which has an Element equal to T.
      */
-    public init<G where G: IteratorProtocol, G.Element == T>(maxCount max: Int? = .none, strategy: WaitStrategy = .fixed(0.1), generator gen: G) {
+    public init<G>(maxCount max: Int? = .none, strategy: WaitStrategy = .fixed(0.1), generator gen: G) where G: IteratorProtocol, G.Element == T {
 
         let delay = MapGenerator(strategy.generator()) { Delay.by($0) }
         let tuple = TupleGenerator(primary: gen, secondary: delay)

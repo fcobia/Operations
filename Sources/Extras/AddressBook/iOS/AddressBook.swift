@@ -73,7 +73,7 @@ public protocol AddressBookPermissionRegistrar {
     func createAddressBook() -> (ABAddressBook?, AddressBookPermissionRegistrarError?)
 
     @available(iOS, deprecated: 9.0)
-    func requestAccessToAddressBook(_ addressBook: ABAddressBook, completion: (AddressBookPermissionRegistrarError?) -> Void)
+    func requestAccessToAddressBook(_ addressBook: ABAddressBook, completion: @escaping (AddressBookPermissionRegistrarError?) -> Void)
 }
 
 // MARK: - AddressBookExternalChangeObserver
@@ -89,50 +89,50 @@ public protocol AddressBookType {
     associatedtype GroupStorage
     associatedtype SourceStorage
 
-    func requestAccess(_ completion: (AddressBookPermissionRegistrarError?) -> Void)
+    func requestAccess(_ completion: @escaping (AddressBookPermissionRegistrarError?) -> Void)
 
-    func save() -> ErrorProtocol?
+    func save() -> Error?
 
     // Records
 
-    func addRecord<R: AddressBookRecordType where R.Storage == RecordStorage>(_ record: R) -> ErrorProtocol?
+    func addRecord<R: AddressBookRecordType>(_ record: R) -> Error? where R.Storage == RecordStorage
 
-    func removeRecord<R: AddressBookRecordType where R.Storage == RecordStorage>(_ record: R) -> ErrorProtocol?
+    func removeRecord<R: AddressBookRecordType>(_ record: R) -> Error? where R.Storage == RecordStorage
 
     // People
 
     var numberOfPeople: Int { get }
 
     @available(iOS, deprecated: 9.0)
-    func personWithID<P: AddressBook_PersonType where P.Storage == PersonStorage>(_ id: ABRecordID) -> P?
+    func personWithID<P: AddressBook_PersonType>(_ id: ABRecordID) -> P? where P.Storage == PersonStorage
 
-    func peopleWithName<P: AddressBook_PersonType where P.Storage == PersonStorage>(_ name: String) -> [P]
+    func peopleWithName<P: AddressBook_PersonType>(_ name: String) -> [P] where P.Storage == PersonStorage
 
-    func people<P: AddressBook_PersonType where P.Storage == PersonStorage>() -> [P]
+    func people<P: AddressBook_PersonType>() -> [P] where P.Storage == PersonStorage
 
-    func peopleInSource<P: AddressBook_PersonType, S: AddressBook_SourceType where P.Storage == PersonStorage, S.Storage == SourceStorage>(_ source: S) -> [P]
+    func peopleInSource<P: AddressBook_PersonType, S: AddressBook_SourceType>(_ source: S) -> [P] where P.Storage == PersonStorage, S.Storage == SourceStorage
 
-    func peopleInSource<P: AddressBook_PersonType, S: AddressBook_SourceType where P.Storage == PersonStorage, S.Storage == SourceStorage>(_ source: S, withSortOrdering sortOrdering: AddressBook.SortOrdering) -> [P]
+    func peopleInSource<P: AddressBook_PersonType, S: AddressBook_SourceType>(_ source: S, withSortOrdering sortOrdering: AddressBook.SortOrdering) -> [P] where P.Storage == PersonStorage, S.Storage == SourceStorage
 
     // Groups
 
     var numberOfGroups: Int { get }
 
     @available(iOS, deprecated: 9.0)
-    func groupWithID<G: AddressBook_GroupType where G.Storage == GroupStorage>(_ id: ABRecordID) -> G?
+    func groupWithID<G: AddressBook_GroupType>(_ id: ABRecordID) -> G? where G.Storage == GroupStorage
 
-    func groups<G: AddressBook_GroupType where G.Storage == GroupStorage>() -> [G]
+    func groups<G: AddressBook_GroupType>() -> [G] where G.Storage == GroupStorage
 
-    func groupsInSource<G: AddressBook_GroupType, S: AddressBook_SourceType where G.Storage == GroupStorage, S.Storage == SourceStorage>(_ source: S) -> [G]
+    func groupsInSource<G: AddressBook_GroupType, S: AddressBook_SourceType>(_ source: S) -> [G] where G.Storage == GroupStorage, S.Storage == SourceStorage
 
     // Sources
 
-    func defaultSource<S: AddressBook_SourceType where S.Storage == SourceStorage>() -> S
+    func defaultSource<S: AddressBook_SourceType>() -> S where S.Storage == SourceStorage
 
     @available(iOS, deprecated: 9.0)
-    func sourceWithID<S: AddressBook_SourceType where S.Storage == SourceStorage>(_ id: ABRecordID) -> S?
+    func sourceWithID<S: AddressBook_SourceType>(_ id: ABRecordID) -> S? where S.Storage == SourceStorage
 
-    func sources<S: AddressBook_SourceType where S.Storage == SourceStorage>() -> [S]
+    func sources<S: AddressBook_SourceType>() -> [S] where S.Storage == SourceStorage
 }
 
 // MARK: - StorageType
@@ -158,7 +158,7 @@ public protocol AddressBookRecordType: StorageType {
 
     func value<P: ReadablePropertyType>(forProperty property: P) -> P.ValueType?
 
-    func setValue<P: WriteablePropertyType>(_ value: P.ValueType?, forProperty property: P) -> ErrorProtocol?
+    func setValue<P: WriteablePropertyType>(_ value: P.ValueType?, forProperty property: P) -> Error?
 }
 
 // MARK: - AddressBook_PersonType
@@ -186,11 +186,11 @@ public protocol AddressBook_GroupType: AddressBookRecordType {
 
 public protocol AddressBookGroupType: AddressBook_GroupType {
 
-    func members<P: AddressBook_PersonType where P.Storage == PersonStorage>(_ ordering: AddressBook.SortOrdering?) -> [P]
+    func members<P: AddressBook_PersonType>(_ ordering: AddressBook.SortOrdering?) -> [P] where P.Storage == PersonStorage
 
-    func add<P: AddressBook_PersonType where P.Storage == PersonStorage>(_ member: P) -> ErrorProtocol?
+    func add<P: AddressBook_PersonType>(_ member: P) -> Error? where P.Storage == PersonStorage
 
-    func remove<P: AddressBook_PersonType where P.Storage == PersonStorage>(_ member: P) -> ErrorProtocol?
+    func remove<P: AddressBook_PersonType>(_ member: P) -> Error? where P.Storage == PersonStorage
 }
 
 // MARK: - AddressBook_SourceType
@@ -206,9 +206,9 @@ public protocol AddressBookSourceType: AddressBook_SourceType {
 
     var sourceKind: AddressBook.SourceKind { get }
 
-    func newPerson<P: AddressBook_PersonType where P.Storage == PersonStorage>() -> P
+    func newPerson<P: AddressBook_PersonType>() -> P where P.Storage == PersonStorage
 
-    func newGroup<G: AddressBook_GroupType where G.Storage == GroupStorage>() -> G
+    func newGroup<G: AddressBook_GroupType>() -> G where G.Storage == GroupStorage
 }
 
 
@@ -216,6 +216,7 @@ public protocol AddressBookSourceType: AddressBook_SourceType {
 
 @available(iOS, deprecated: 9.0)
 public final class AddressBook: AddressBookType {
+
 
 // MARK: - SortOrdering
 
@@ -514,14 +515,14 @@ public final class AddressBook: AddressBookType {
 
 // MARK: - StringMultiValue
 
-    public struct StringMultiValue: MultiValueRepresentable, Equatable, CustomStringConvertible, StringLiteralConvertible {
+    public struct StringMultiValue: MultiValueRepresentable, Equatable, CustomStringConvertible, ExpressibleByStringLiteral {
 
         public static let propertyKind = AddressBook.PropertyKind.string
 
         public var value: String
 
         public var multiValueRepresentation: CFTypeRef {
-            return value
+            return value as NSString
         }
 
         public var description: String {
@@ -559,11 +560,11 @@ public final class AddressBook: AddressBookType {
         public var value: Date
 
         public var multiValueRepresentation: CFTypeRef {
-            return value
+            return value as NSDate
         }
 
         public var description: String {
-            return String(value)
+			return String(describing: value)
         }
 
         public var debugDescription: String {
@@ -625,17 +626,17 @@ public final class AddressBook: AddressBookType {
     public typealias GroupStorage = ABRecord
     public typealias SourceStorage = ABRecord
 
-    public enum Error: ErrorProtocol {
+    public enum AddressBookError: Swift.Error {
 
-        case save(NSError?)
-        case addRecord(NSError?)
-        case removeRecord(NSError?)
-        case setValue((id: ABPropertyID, underlyingError: NSError?))
-        case removeValue((id: ABPropertyID, underlyingError: NSError?))
-        case addGroupMember(NSError?)
-        case removeGroupMember(NSError?)
+        case save(Error?)
+        case addRecord(Error?)
+        case removeRecord(Error?)
+        case setValue((id: ABPropertyID, underlyingError: Error?))
+        case removeValue((id: ABPropertyID, underlyingError: Error?))
+        case addGroupMember(Error?)
+        case removeGroupMember(Error?)
 
-        case underlyingError(NSError)
+        case underlyingError(Error)
         case unknownError
 
         init(error: Unmanaged<CFError>?) {
@@ -643,7 +644,7 @@ public final class AddressBook: AddressBookType {
         }
     }
 
-    private let registrar: AddressBookPermissionRegistrar
+    fileprivate let registrar: AddressBookPermissionRegistrar
 
     public let addressBook: ABAddressBook!
 
@@ -664,36 +665,36 @@ public final class AddressBook: AddressBookType {
 @available(iOS, deprecated: 9.0)
 extension AddressBook {
 
-    public func requestAccess(_ completion: (AddressBookPermissionRegistrarError?) -> Void) {
+	public func requestAccess(_ completion: @escaping (AddressBookPermissionRegistrarError?) -> Void) {
         registrar.requestAccessToAddressBook(addressBook, completion: completion)
     }
 
-    public func save() -> ErrorProtocol? {
+    public func save() -> Error? {
         var error: Unmanaged<CFError>? = .none
         if ABAddressBookSave(addressBook, &error) {
             return .none
         }
-        return Error.save(NSError.from(error))
+        return AddressBookError.save(NSError.from(error))
     }
 }
 
 @available(iOS, deprecated: 9.0)
 extension AddressBook { // Records
 
-    public func addRecord<R: AddressBookRecordType where R.Storage == RecordStorage>(_ record: R) -> ErrorProtocol? {
+    public func addRecord<R: AddressBookRecordType>(_ record: R) -> Error? where R.Storage == RecordStorage {
         var error: Unmanaged<CFError>? = .none
         if ABAddressBookAddRecord(addressBook, record.storage, &error) {
             return .none
         }
-        return Error.addRecord(NSError.from(error))
+        return AddressBookError.addRecord(NSError.from(error))
     }
 
-    public func removeRecord<R: AddressBookRecordType where R.Storage == RecordStorage>(_ record: R) -> ErrorProtocol? {
+    public func removeRecord<R: AddressBookRecordType>(_ record: R) -> Error? where R.Storage == RecordStorage {
         var error: Unmanaged<CFError>? = .none
         if ABAddressBookRemoveRecord(addressBook, record.storage, &error) {
             return .none
         }
-        return Error.removeRecord(NSError.from(error))
+        return AddressBookError.removeRecord(NSError.from(error))
     }
 }
 
@@ -704,29 +705,29 @@ extension AddressBook { // People
         return ABAddressBookGetPersonCount(addressBook)
     }
 
-    public func createPerson<P: AddressBook_PersonType, S: AddressBookSourceType where P.Storage == PersonStorage, S.Storage == SourceStorage, P.Storage == S.PersonStorage>(_ source: S? = .none) -> P {
+    public func createPerson<P: AddressBook_PersonType, S: AddressBookSourceType>(_ source: S? = .none) -> P where P.Storage == PersonStorage, S.Storage == SourceStorage, P.Storage == S.PersonStorage {
         if let source = source {
             return source.newPerson()
         }
         return P(storage: ABPersonCreate().takeUnretainedValue())
     }
 
-    public func personWithID<P: AddressBook_PersonType where P.Storage == PersonStorage>(_ id: ABRecordID) -> P? {
+    public func personWithID<P: AddressBook_PersonType>(_ id: ABRecordID) -> P? where P.Storage == PersonStorage {
         if let record = ABAddressBookGetPersonWithRecordID(addressBook, id) {
             return P(storage: record.takeUnretainedValue())
         }
         return .none
     }
 
-    public func peopleWithName<P: AddressBook_PersonType where P.Storage == PersonStorage>(_ name: String) -> [P] {
-        if let people = ABAddressBookCopyPeopleWithName(addressBook, name) {
+    public func peopleWithName<P: AddressBook_PersonType>(_ name: String) -> [P] where P.Storage == PersonStorage {
+        if let people = ABAddressBookCopyPeopleWithName(addressBook, name as CFString!) {
             let values = people.takeRetainedValue() as [ABRecord]
             return values.map { P(storage: $0) }
         }
         return []
     }
 
-    public func people<P: AddressBook_PersonType where P.Storage == PersonStorage>() -> [P] {
+    public func people<P: AddressBook_PersonType>() -> [P] where P.Storage == PersonStorage {
         if let people = ABAddressBookCopyArrayOfAllPeople(addressBook) {
             let values = people.takeRetainedValue() as [ABRecord]
             return values.map { P(storage: $0) }
@@ -734,7 +735,7 @@ extension AddressBook { // People
         return []
     }
 
-    public func peopleInSource<P: AddressBook_PersonType, S: AddressBook_SourceType where P.Storage == PersonStorage, S.Storage == SourceStorage>(_ source: S) -> [P] {
+    public func peopleInSource<P: AddressBook_PersonType, S: AddressBook_SourceType>(_ source: S) -> [P] where P.Storage == PersonStorage, S.Storage == SourceStorage {
         if let people = ABAddressBookCopyArrayOfAllPeopleInSource(addressBook, source.storage) {
             let values = people.takeRetainedValue() as [ABRecord]
             return values.map { P(storage: $0) }
@@ -742,7 +743,7 @@ extension AddressBook { // People
         return []
     }
 
-    public func peopleInSource<P: AddressBook_PersonType, S: AddressBook_SourceType where P.Storage == PersonStorage, S.Storage == SourceStorage>(_ source: S, withSortOrdering sortOrdering: AddressBook.SortOrdering) -> [P] {
+    public func peopleInSource<P: AddressBook_PersonType, S: AddressBook_SourceType>(_ source: S, withSortOrdering sortOrdering: AddressBook.SortOrdering) -> [P] where P.Storage == PersonStorage, S.Storage == SourceStorage {
         if let people = ABAddressBookCopyArrayOfAllPeopleInSourceWithSortOrdering(addressBook, source.storage, sortOrdering.rawValue) {
             let values = people.takeRetainedValue() as [ABRecord]
             return values.map { P(storage: $0) }
@@ -758,14 +759,14 @@ extension AddressBook { // Groups
         return ABAddressBookGetGroupCount(addressBook)
     }
 
-    public func groupWithID<G: AddressBook_GroupType where G.Storage == GroupStorage>(_ id: ABRecordID) -> G? {
+    public func groupWithID<G: AddressBook_GroupType>(_ id: ABRecordID) -> G? where G.Storage == GroupStorage {
         if let record = ABAddressBookGetGroupWithRecordID(addressBook, id) {
             return G(storage: record.takeUnretainedValue())
         }
         return .none
     }
 
-    public func groups<G: AddressBook_GroupType where G.Storage == GroupStorage>() -> [G] {
+    public func groups<G: AddressBook_GroupType>() -> [G] where G.Storage == GroupStorage {
         if let records = ABAddressBookCopyArrayOfAllGroups(addressBook) {
             let values = records.takeRetainedValue() as [ABRecord]
             return values.map { G(storage: $0) }
@@ -773,7 +774,7 @@ extension AddressBook { // Groups
         return []
     }
 
-    public func groupsInSource<G: AddressBook_GroupType, S: AddressBook_SourceType where G.Storage == GroupStorage, S.Storage == SourceStorage>(_ source: S) -> [G] {
+    public func groupsInSource<G: AddressBook_GroupType, S: AddressBook_SourceType>(_ source: S) -> [G] where G.Storage == GroupStorage, S.Storage == SourceStorage {
         if let records = ABAddressBookCopyArrayOfAllGroupsInSource(addressBook, source.storage) {
             let values = records.takeRetainedValue() as [ABRecord]
             return values.map { G(storage: $0) }
@@ -785,19 +786,19 @@ extension AddressBook { // Groups
 @available(iOS, deprecated: 9.0)
 extension AddressBook { // Sources
 
-    public func defaultSource<S: AddressBook_SourceType where S.Storage == SourceStorage>() -> S {
+    public func defaultSource<S: AddressBook_SourceType>() -> S where S.Storage == SourceStorage {
         let source: ABRecord = ABAddressBookCopyDefaultSource(addressBook).takeRetainedValue()
         return S(storage: source)
     }
 
-    public func sourceWithID<S: AddressBook_SourceType where S.Storage == SourceStorage>(_ id: ABRecordID) -> S? {
+    public func sourceWithID<S: AddressBook_SourceType>(_ id: ABRecordID) -> S? where S.Storage == SourceStorage {
         if let record = ABAddressBookGetSourceWithRecordID(addressBook, id) {
             return S(storage: record.takeUnretainedValue())
         }
         return .none
     }
 
-    public func sources<S: AddressBook_SourceType where S.Storage == SourceStorage>() -> [S] {
+    public func sources<S: AddressBook_SourceType>() -> [S] where S.Storage == SourceStorage {
         if let sources = ABAddressBookCopyArrayOfAllSources(addressBook) {
             let values = sources.takeRetainedValue() as [ABRecord]
             return values.map { S(storage: $0) }
@@ -858,7 +859,7 @@ public struct LabeledValue<Value: MultiValueRepresentable>: CustomStringConverti
 
     static func write(_ labeledValues: [LabeledValue<Value>]) -> ABMultiValue {
         return labeledValues.reduce(ABMultiValueCreateMutable(Value.propertyKind.rawValue).takeRetainedValue() as ABMutableMultiValue) { (multiValue, labeledValue) in
-            ABMultiValueAddValueAndLabel(multiValue, labeledValue.value.multiValueRepresentation, labeledValue.label, nil)
+            ABMultiValueAddValueAndLabel(multiValue, labeledValue.value.multiValueRepresentation, labeledValue.label as CFString!, nil)
             return multiValue
         }
     }
@@ -867,7 +868,7 @@ public struct LabeledValue<Value: MultiValueRepresentable>: CustomStringConverti
     public let value: Value
 
     public var description: String {
-        return "\(label): \(String(value))"
+		return "\(label): \(String(describing: value))"
     }
 
     public var debugDescription: String {
@@ -912,20 +913,20 @@ public class AddressBookRecord: AddressBookRecordType, Equatable {
         return .none
     }
 
-    public func setValue<P: WriteablePropertyType>(_ value: P.ValueType?, forProperty property: P) -> ErrorProtocol? {
+    public func setValue<P: WriteablePropertyType>(_ value: P.ValueType?, forProperty property: P) -> Error? {
         var error: Unmanaged<CFError>? = .none
         if let value = value {
-            let transformed: CFTypeRef = property.writer?(value) ?? value as! CFTypeRef
+            let transformed: CFTypeRef = property.writer?(value) ?? value as CFTypeRef
             if ABRecordSetValue(storage, property.id, transformed, &error) {
                 return .none
             }
-            return AddressBook.Error.setValue(id: property.id, underlyingError: NSError.from(error))
+            return AddressBook.AddressBookError.setValue(id: property.id, underlyingError: NSError.from(error))
         }
         else {
             if ABRecordRemoveValue(storage, property.id, &error) {
                 return .none
             }
-            return AddressBook.Error.removeValue(id: property.id, underlyingError: NSError.from(error))
+            return AddressBook.AddressBookError.removeValue(id: property.id, underlyingError: NSError.from(error))
         }
     }
 }
@@ -1008,7 +1009,7 @@ public class AddressBookGroup: AddressBookRecord, AddressBookGroupType {
         super.init(storage: storage)
     }
 
-    public func members<P: AddressBook_PersonType where P.Storage == PersonStorage>(_ ordering: AddressBook.SortOrdering? = .none) -> [P] {
+    public func members<P: AddressBook_PersonType>(_ ordering: AddressBook.SortOrdering? = .none) -> [P] where P.Storage == PersonStorage {
         let result: [ABRecord] = {
             if let ordering = ordering, let unmanaged = ABGroupCopyArrayOfAllMembersWithSortOrdering(self.storage, ordering.rawValue) {
                 return unmanaged.takeRetainedValue() as [ABRecord]
@@ -1022,20 +1023,20 @@ public class AddressBookGroup: AddressBookRecord, AddressBookGroupType {
         return result.map { P(storage: $0) }
     }
 
-    public func add<P: AddressBook_PersonType where P.Storage == PersonStorage>(_ member: P) -> ErrorProtocol? {
+    public func add<P: AddressBook_PersonType>(_ member: P) -> Error? where P.Storage == PersonStorage {
         var error: Unmanaged<CFError>? = .none
         if ABGroupAddMember(storage, member.storage, &error) {
             return .none
         }
-        return AddressBook.Error.addGroupMember(NSError.from(error))
+        return AddressBook.AddressBookError.addGroupMember(NSError.from(error))
     }
 
-    public func remove<P: AddressBook_PersonType where P.Storage == PersonStorage>(_ member: P) -> ErrorProtocol? {
+    public func remove<P: AddressBook_PersonType>(_ member: P) -> Error? where P.Storage == PersonStorage {
         var error: Unmanaged<CFError>? = .none
         if ABGroupRemoveMember(storage, member.storage, &error) {
             return .none
         }
-        return AddressBook.Error.removeGroupMember(NSError.from(error))
+        return AddressBook.AddressBookError.removeGroupMember(NSError.from(error))
     }
 }
 
@@ -1060,12 +1061,12 @@ public class AddressBookSource: AddressBookRecord, AddressBookSourceType {
         super.init(storage: storage)
     }
 
-    public func newPerson<P: AddressBook_PersonType where P.Storage == PersonStorage>() -> P {
+    public func newPerson<P: AddressBook_PersonType>() -> P where P.Storage == PersonStorage {
         let person: ABRecord = ABPersonCreateInSource(storage).takeRetainedValue()
         return P(storage: person)
     }
 
-    public func newGroup<G: AddressBook_GroupType where G.Storage == GroupStorage>() -> G {
+    public func newGroup<G: AddressBook_GroupType>() -> G where G.Storage == GroupStorage {
         let group: ABRecord = ABGroupCreateInSource(storage).takeRetainedValue()
         return G(storage: group)
     }
@@ -1101,7 +1102,7 @@ func reader<T: RawRepresentable>(_ value: CFTypeRef) -> T {
 }
 
 func writer<T: RawRepresentable>(_ value: T) -> CFTypeRef {
-    return value.rawValue as! CFTypeRef
+    return value.rawValue as CFTypeRef
 }
 
 @available(iOS, deprecated: 9.0)
@@ -1114,10 +1115,10 @@ func writer<T: MultiValueRepresentable>(_ value: [LabeledValue<T>]) -> CFTypeRef
     return LabeledValue.write(value)
 }
 
-extension NSError {
+extension Error {
 
-    static func from(_ ref: Unmanaged<CFError>?) -> NSError? {
-        return ref.map { unsafeBitCast($0.takeRetainedValue(), to: NSError.self) }
+    static func from(_ ref: Unmanaged<CFError>?) -> Error? {
+        return ref.map { unsafeBitCast($0.takeRetainedValue(), to: Error.self) }
     }
 }
 
@@ -1128,7 +1129,7 @@ extension NSError {
 
 
 
-public enum AddressBookPermissionRegistrarError: ErrorProtocol {
+public enum AddressBookPermissionRegistrarError: Error {
     case addressBookUnknownErrorOccured
     case addressBookAccessDenied
 }
@@ -1146,14 +1147,14 @@ public struct SystemAddressBookRegistrar: AddressBookPermissionRegistrar {
             return (addressBook.takeRetainedValue(), .none)
         }
         else if let error = NSError.from(addressBookError) {
-            if (error.domain == ABAddressBookErrorDomain as String) && error.code == kABOperationNotPermittedByUserError {
+            if ((error as NSError).domain == ABAddressBookErrorDomain as String) && (error as NSError).code == kABOperationNotPermittedByUserError {
                 return (.none, AddressBookPermissionRegistrarError.addressBookAccessDenied)
             }
         }
         return (.none, AddressBookPermissionRegistrarError.addressBookUnknownErrorOccured)
     }
 
-    public func requestAccessToAddressBook(_ addressBook: ABAddressBook, completion: (AddressBookPermissionRegistrarError?) -> Void) {
+    public func requestAccessToAddressBook(_ addressBook: ABAddressBook, completion: @escaping (AddressBookPermissionRegistrarError?) -> Void) {
         ABAddressBookRequestAccessWithCompletion(addressBook) { (success, error) in
             if success {
                 completion(nil)

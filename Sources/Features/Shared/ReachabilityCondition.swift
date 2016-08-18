@@ -31,7 +31,7 @@ public class ReachabilityCondition: Condition {
         name = "Reachability"
     }
 
-    public override func evaluate(_ operation: Procedure, completion: (OperationConditionResult) -> Void) {
+    public override func evaluate(_ operation: Procedure, completion: @escaping (OperationConditionResult) -> Void) {
         reachability.reachabilityForURL(url) { status in
             switch (self.connectivity, status) {
             case (.anyConnectionKind, .reachable(_)), (.viaWWAN, .reachable(_)), (.viaWiFi, .reachable(.viaWiFi)):

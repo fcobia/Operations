@@ -38,8 +38,8 @@ class OperationKVOTests: OperationTests {
     class NSOperationKVOObserver: NSObject {
 
         let operation: Operation
-        private var removedObserved = false
-        private var isFinishedBlock: (() -> Void)?
+        fileprivate var removedObserved = false
+        fileprivate var isFinishedBlock: (() -> Void)?
 
         enum KeyPath: String {
             case Cancelled = "isCancelled"
@@ -60,7 +60,7 @@ class OperationKVOTests: OperationTests {
             let keyPath: String
             let time: TimeInterval
         }
-        private var orderOfKVONotifications = Protector<[KVONotification]>([])
+        fileprivate var orderOfKVONotifications = Protector<[KVONotification]>([])
 
 
         init(operation: Operation, isFinishedBlock: (() -> Void)? = nil) {
@@ -185,7 +185,7 @@ class OperationKVOTests: OperationTests {
         waitForExpectations(timeout: 5, handler: nil)
     }
 
-    private func verifyKVO_cancelledNotifications(_ observedKVO: [NSOperationKVOObserver.KVONotification]) -> (success: Bool, isReadyIndex: Int?, failureMessage: String?) {
+    fileprivate func verifyKVO_cancelledNotifications(_ observedKVO: [NSOperationKVOObserver.KVONotification]) -> (success: Bool, isReadyIndex: Int?, failureMessage: String?) {
         // ensure that the observedKVO contains:
         // "isReady", with at least one "isCancelled" before it
         if let isReadyIndex = observedKVO.index(where: { $0.keyPath == NSOperationKVOObserver.KeyPath.Ready.rawValue }) {
@@ -395,4 +395,4 @@ extension Array {
     }
 }
 
-private var TestKVOOperationKVOContext = 0
+fileprivate var TestKVOOperationKVOContext = 0

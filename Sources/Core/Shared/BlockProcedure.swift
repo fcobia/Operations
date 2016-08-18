@@ -17,10 +17,10 @@ argument to finish with the supplied error.
 */
 public class BlockProcedure: Procedure {
 
-    public typealias ContinuationBlockType = (error: Error?) -> Void
-    public typealias BlockType = (continueWithError: ContinuationBlockType) -> Void
+    public typealias ContinuationBlockType = (_ error: Error?) -> Void
+    public typealias BlockType = (_ continueWithError: ContinuationBlockType) -> Void
 
-    private let block: BlockType
+    fileprivate let block: BlockType
 
     /**
     Designated initializer.
@@ -28,7 +28,7 @@ public class BlockProcedure: Procedure {
     - parameter block: The closure to run when the operation executes.
     If this block is nil, the operation will immediately finish.
     */
-    public required init(block: BlockType = { continuation in continuation(error: nil) }) {
+    public required init(block: BlockType = { continuation in continuation(nil) }) {
         self.block = block
         super.init()
         name = "BlockProcedure"
@@ -39,11 +39,11 @@ public class BlockProcedure: Procedure {
 
     - parameter block: a dispatch block which is run on the main thread.
     */
-    public convenience init(mainQueueBlock: ()->()) {
+    public convenience init(mainQueueBlock: @escaping ()->()) {
         self.init(block: { continuation in
             Queue.main.queue.async {
                 mainQueueBlock()
-                continuation(error: nil)
+                continuation(nil)
             }
         })
     }

@@ -8,9 +8,9 @@
 
 import Foundation
 
-func arc4random<T: IntegerLiteralConvertible>(_ type: T.Type) -> T {
+func arc4random<T: ExpressibleByIntegerLiteral>(_ type: T.Type) -> T {
     var r: T = 0
-    arc4random_buf(&r, Int(sizeof(T.self)))
+    arc4random_buf(&r, Int(MemoryLayout<T>.size))
     return r
 }
 
@@ -29,8 +29,8 @@ func arc4random<T: IntegerLiteralConvertible>(_ type: T.Type) -> T {
  */
 public struct RandomFailGenerator<G: IteratorProtocol>: IteratorProtocol {
 
-    private var generator: G
-    private let shouldNotFail: () -> Bool
+    fileprivate var generator: G
+    fileprivate let shouldNotFail: () -> Bool
 
     /**
      Initialize the generator with another generator and expected
@@ -69,8 +69,8 @@ struct FibonacciGenerator: IteratorProtocol {
 
 struct FiniteGenerator<G: IteratorProtocol>: IteratorProtocol {
 
-    private let limit: Int
-    private var generator: G
+    fileprivate let limit: Int
+    fileprivate var generator: G
 
     var count: Int = 0
 
@@ -89,11 +89,11 @@ struct FiniteGenerator<G: IteratorProtocol>: IteratorProtocol {
 }
 
 struct MapGenerator<G: IteratorProtocol, T>: IteratorProtocol {
-    private let transform: (G.Element) -> T
-    private var generator: G
+    fileprivate let transform: (G.Element) -> T
+    fileprivate var generator: G
 
 
-    init(_ generator: G, transform: (G.Element) -> T) {
+    init(_ generator: G, transform: @escaping (G.Element) -> T) {
         self.generator = generator
         self.transform = transform
     }
@@ -105,8 +105,8 @@ struct MapGenerator<G: IteratorProtocol, T>: IteratorProtocol {
 
 struct TupleGenerator<Primary: IteratorProtocol, Secondary: IteratorProtocol>: IteratorProtocol {
 
-    private var primary: Primary
-    private var secondary: Secondary
+    fileprivate var primary: Primary
+    fileprivate var secondary: Secondary
 
     init(primary: Primary, secondary: Secondary) {
         self.primary = primary
@@ -123,8 +123,8 @@ struct IntervalGenerator: IteratorProtocol {
 
     let strategy: WaitStrategy
 
-    private var count: Int = 0
-    private lazy var fibonacci = FibonacciGenerator()
+    fileprivate var count: Int = 0
+    fileprivate lazy var fibonacci = FibonacciGenerator()
 
     init(_ strategy: WaitStrategy) {
         self.strategy = strategy

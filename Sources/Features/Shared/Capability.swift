@@ -70,7 +70,7 @@ public protocol CapabilityType {
 
      - parameter completion: a dispatch_block_t closure.
     */
-    func requestAuthorizationWithCompletion(_ completion: ()->())
+    func requestAuthorizationWithCompletion(_ completion: @escaping () -> ())
 }
 
 /**
@@ -284,7 +284,7 @@ public class AuthorizedFor<Capability: CapabilityType>: Condition {
     }
 
     /// Evaluated the condition
-    public override func evaluate(_ operation: Procedure, completion: (OperationConditionResult) -> Void) {
+    public override func evaluate(_ operation: Procedure, completion: @escaping (OperationConditionResult) -> Void) {
 
         guard capability.isAvailable() else {
             completion(.failed(CapabilityError<Capability>.notAvailable))

@@ -60,7 +60,7 @@ public class _ContactsAccess<Store: ContactStoreType>: Procedure {
         }
     }
 
-    final func requestAccessDidComplete(_ success: Bool, error: NSError?) {
+    final func requestAccessDidComplete(_ success: Bool, error: Error?) {
         switch (success, error) {
 
         case (true, _):
@@ -148,7 +148,7 @@ public class _ContactsOperation<Store: ContactStoreType>: _ContactsAccess<Store>
         let group = try groupsNamed(groupName).first ?? createGroupWithName(groupName)
         let save = Store.SaveRequest()
 
-        let fetch = CNContactFetchRequest(keysToFetch: [CNContactIdentifierKey])
+        let fetch = CNContactFetchRequest(keysToFetch: [CNContactIdentifierKey as NSString])
         fetch.predicate = CNContact.predicateForContacts(withIdentifiers: contactIDs)
 
         try store.opr_enumerateContactsWithFetchRequest(fetch) { contact, _ in
@@ -163,7 +163,7 @@ public class _ContactsOperation<Store: ContactStoreType>: _ContactsAccess<Store>
 
         let save = Store.SaveRequest()
 
-        let fetch = CNContactFetchRequest(keysToFetch: [CNContactIdentifierKey])
+        let fetch = CNContactFetchRequest(keysToFetch: [CNContactIdentifierKey as NSString])
         fetch.predicate = CNContact.predicateForContacts(withIdentifiers: contactIDs)
 
         try store.opr_enumerateContactsWithFetchRequest(fetch) { contact, _ in

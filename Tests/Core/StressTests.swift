@@ -90,7 +90,7 @@ class StressTest: OperationTests {
     }
     
     class Counter {
-        private(set) var count: Int32 = 0
+        fileprivate(set) var count: Int32 = 0
         
         @discardableResult
         func increment() -> Int32 {

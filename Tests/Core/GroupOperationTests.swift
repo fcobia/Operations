@@ -115,7 +115,7 @@ class GroupOperationTests: OperationTests {
         let numberOfOperations = 10_000
         let operations = (0..<numberOfOperations).map { i -> Procedure in
             let block = BlockProcedure { (completion: BlockProcedure.ContinuationBlockType) in
-                let error = NSError(domain: "me.danthorpe.Operations.Tests", code: -9_999, userInfo: nil)
+                let error = Error(domain: "me.danthorpe.Operations.Tests", code: -9_999, userInfo: nil)
                 completion(error: error)
             }
             block.name = "Block \(i)"
@@ -346,7 +346,7 @@ class GroupOperationTests: OperationTests {
 
     func test__group_operation__execute_is_called_when_cancelled_before_running() {
         class TestGroupOperation: GroupOperation {
-            private(set) var didExecute: Bool = false
+            fileprivate(set) var didExecute: Bool = false
 
             override func execute() {
                 didExecute = true
@@ -424,7 +424,7 @@ class GroupOperationTests: OperationTests {
     
     func test__group_operation_ignores_queue_delegate_calls_from_other_queues() {
         class PoorlyWrittenGroupOperationSubclass: GroupOperation {
-            private var subclassQueue = ProcedureQueue()
+            fileprivate var subclassQueue = ProcedureQueue()
             override init(operations: [Operation]) {
                 super.init(operations: operations)
                 subclassQueue.delegate = self

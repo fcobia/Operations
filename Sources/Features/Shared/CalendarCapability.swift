@@ -124,7 +124,7 @@ public class EventsCapability: CapabilityType {
      Request authorization to EventKit from the Registrar.
      - parameter completion: a dispatch_block_t
      */
-    public func requestAuthorizationWithCompletion(_ completion: ()->()) {
+    public func requestAuthorizationWithCompletion(_ completion: @escaping ()->()) {
         let status = registrar.opr_authorizationStatusForRequirement(requirement)
         switch status {
         case .notDetermined:

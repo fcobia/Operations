@@ -21,7 +21,7 @@ extension UIApplication: RemoteNotificationRegistrarType {
 public class RemoteNotificationCondition: Condition {
 
     public enum Error: Swift.Error {
-        case receivedError(NSError)
+        case receivedError(Swift.Error)
     }
 
     static let queue = ProcedureQueue()
@@ -31,7 +31,7 @@ public class RemoteNotificationCondition: Condition {
             .post(name: Notification.Name(rawValue: RemoteNotificationName), object: nil, userInfo: [RemoteNotificationTokenKey: token])
     }
 
-    public static func didFailToRegisterForRemoteNotifications(_ error: NSError) {
+    public static func didFailToRegisterForRemoteNotifications(_ error: Error) {
         NotificationCenter.default
             .post(name: Notification.Name(rawValue: RemoteNotificationName), object: nil, userInfo: [RemoteNotificationErrorKey: error])
     }
@@ -54,7 +54,7 @@ public class RemoteNotificationCondition: Condition {
         addDependency(RemoteNotificationsRegistration(registrar: registrar) { _ in })
     }
 
-    public override func evaluate(_ operation: Procedure, completion: (OperationConditionResult) -> Void) {
+    public override func evaluate(_ operation: Procedure, completion: @escaping (OperationConditionResult) -> Void) {
         let operation = RemoteNotificationsRegistration(registrar: registrar) { result in
             switch result {
             case .token(_):
@@ -71,7 +71,7 @@ public class RemoteNotificationsRegistration: Procedure {
 
     public enum RegistrationResult {
         case token(Data)
-        case error(NSError)
+        case error(Error)
     }
 
     enum NotificationObserver {
@@ -88,11 +88,11 @@ public class RemoteNotificationsRegistration: Procedure {
     let registrar: RemoteNotificationRegistrarType
     let handler: (RegistrationResult) -> Void
 
-    public convenience init(handler: (RegistrationResult) -> Void) {
+    public convenience init(handler: @escaping (RegistrationResult) -> Void) {
         self.init(registrar: UIApplication.shared, handler: handler)
     }
 
-    public init(registrar: RemoteNotificationRegistrarType, handler: (RegistrationResult) -> Void) {
+    public init(registrar: RemoteNotificationRegistrarType, handler: @escaping (RegistrationResult) -> Void) {
         self.registrar = registrar
         self.handler = handler
         super.init()
@@ -116,7 +116,7 @@ public class RemoteNotificationsRegistration: Procedure {
         if let token = (notification as NSNotification).userInfo?[RemoteNotificationTokenKey] as? Data {
             handler(.token(token))
         }
-        else if let error = (notification as NSNotification).userInfo?[RemoteNotificationErrorKey] as? NSError {
+        else if let error = (notification as NSNotification).userInfo?[RemoteNotificationErrorKey] as? Error {
             handler(.error(error))
         }
         else {
@@ -128,7 +128,7 @@ public class RemoteNotificationsRegistration: Procedure {
 }
 
 // swiftlint:disable variable_name
-private let RemoteNotificationName = "RemoteNotificationName"
-private let RemoteNotificationTokenKey = "RemoteNotificationTokenKey"
-private let RemoteNotificationErrorKey = "RemoteNotificationErrorKey"
+fileprivate let RemoteNotificationName = "RemoteNotificationName"
+fileprivate let RemoteNotificationTokenKey = "RemoteNotificationTokenKey"
+fileprivate let RemoteNotificationErrorKey = "RemoteNotificationErrorKey"
 // swiftlint:enable variable_name

@@ -350,10 +350,10 @@ public class LogManager: LogManagerType {
     }
 
     /// Private protected properties
-    private var _severity: Protector<LogSeverity>
-    private var _enabled: Protector<Bool>
-    private var loggerLock: ReadWriteLock = Lock()
-    private var _logger: LoggerBlockType
+    fileprivate var _severity: Protector<LogSeverity>
+    fileprivate var _enabled: Protector<Bool>
+    fileprivate var loggerLock: ReadWriteLock = Lock()
+    fileprivate var _logger: LoggerBlockType
 }
 
 public extension Operation {

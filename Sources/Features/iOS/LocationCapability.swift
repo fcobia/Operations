@@ -121,6 +121,7 @@ extension CLAuthorizationStatus: AuthorizationStatusType {
  - see: Capability.Location
  */
 public class LocationCapability: NSObject, CLLocationManagerDelegate, CapabilityType {
+	public typealias CapabilityCompletionType = () -> ()
 
     /// - returns: a String, the name of the capability
     public let name: String
@@ -130,7 +131,7 @@ public class LocationCapability: NSObject, CLLocationManagerDelegate, Capability
 
     internal lazy var registrar: LocationCapabilityRegistrarType = CLLocationManager.create()
 
-    internal var authorizationCompletionBlock: (() -> ())? = .none
+    internal var authorizationCompletionBlock: CapabilityCompletionType? = .none
 
     /**
      Initialize the capability. By default, it requires access .WhenInUse.
@@ -161,7 +162,7 @@ public class LocationCapability: NSObject, CLLocationManagerDelegate, Capability
      Request authorization to Location services from the Registrar.
      - parameter completion: a dispatch_block_t
      */
-    public func requestAuthorizationWithCompletion(_ completion: ()->()) {
+    public func requestAuthorizationWithCompletion(_ completion: CapabilityCompletionType) {
         guard isAvailable() else {
             completion()
             return

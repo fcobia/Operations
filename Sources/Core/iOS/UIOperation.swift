@@ -22,7 +22,7 @@ public protocol PresentingViewController: class {
     - parameter animated: a `Bool` flag to indicate whether the presentation should be animated.
     - parameter completion: a completion block which may be nil.
     */
-    func presentViewController(_ viewController: UIViewController, animated: Bool, completion: (() -> Void)?)
+    func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (@escaping () -> Void)?)
 
 
     @available(iOS 8.0, *)
@@ -32,7 +32,7 @@ public protocol PresentingViewController: class {
     - parameter vc: the `UIViewController` being presented.
     - parameter sender: an optional `AnyObject`, usually this is a `UIControl`.
     */
-    func showViewController(_ viewController: UIViewController, sender: AnyObject?)
+    func show(_ vc: UIViewController, sender: Any?)
 
     @available(iOS 8.0, *)
     /**
@@ -41,7 +41,7 @@ public protocol PresentingViewController: class {
     - parameter vc: the `UIViewController` being presented.
     - parameter sender: an optional `AnyObject`, usually this is a `UIControl`.
     */
-    func showDetailViewController(_ viewController: UIViewController, sender: AnyObject?)
+    func showDetailViewController(_ vc: UIViewController, sender: Any?)
 }
 
 extension UIViewController: PresentingViewController { }
@@ -89,7 +89,7 @@ public enum ViewControllerDisplayStyle<ViewController: PresentingViewController>
     - parameter sender: an optional `AnyObject` used as the sender when showing the view controller
     - parameter completion: an optional completion block, defaults to .none.
     */
-    public func displayController<C where C: UIViewController>(_ controller: C, inNavigationController: Bool = true, sender: AnyObject?, completion: (() -> Void)? = .none) {
+    public func displayController<C>(_ controller: C, inNavigationController: Bool = true, sender: AnyObject?, completion: (() -> Void)? = .none) where C: UIViewController {
         switch self {
 
         case .present(let from):
@@ -100,11 +100,10 @@ public enum ViewControllerDisplayStyle<ViewController: PresentingViewController>
             else {
                 presented = UINavigationController(rootViewController: controller)
             }
-            from.presentViewController(presented, animated: true, completion: completion)
+			from.present(presented, animated: true, completion: completion)
 
         case .show(let from):
-            from.showViewController(controller, sender: sender)
-            completion?()
+			from.show(controller, sender: sender)
 
         case .showDetail(let from):
             from.showDetailViewController(controller, sender: sender)
@@ -125,7 +124,7 @@ However, note that the presenting view controller is associated into a `ViewCont
 This enum lets you define how the view controller should be presented. Either, "show", "show detail" or
 "present".
 */
-public class UIOperation<C, From where C: UIViewController, From: PresentingViewController>: Procedure {
+public class UIOperation<C, From>: Procedure where C: UIViewController, From: PresentingViewController {
 
     /// The controller which will be presented.
     public let controller: C

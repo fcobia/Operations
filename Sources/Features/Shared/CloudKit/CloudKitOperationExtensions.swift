@@ -265,10 +265,10 @@ public extension CloudKitOperation where T: BatchModifyOperationType {
 
 public struct DiscoverAllContactsError<DiscoveredUserInfo>: CloudKitErrorType {
 
-    public let underlyingError: NSError
+    public let underlyingError: Error
     public let userInfo: [DiscoveredUserInfo]?
 
-    init(error: NSError, userInfo: [DiscoveredUserInfo]?) {
+    init(error: Error, userInfo: [DiscoveredUserInfo]?) {
         self.underlyingError = error
         self.userInfo = userInfo
     }
@@ -370,10 +370,10 @@ extension CloudKitOperation where T: CKDiscoverUserInfosOperationType {
 
 public struct FetchNotificationChangesError<ServerChangeToken>: CloudKitErrorType {
 
-    public let underlyingError: NSError
+    public let underlyingError: Error
     public let token: ServerChangeToken?
 
-    init(error: NSError, token: ServerChangeToken?) {
+    init(error: Error, token: ServerChangeToken?) {
         self.underlyingError = error
         self.token = token
     }
@@ -455,10 +455,10 @@ extension BatchedCloudKitOperation where T: CKFetchNotificationChangesOperationT
 
 public struct MarkNotificationsReadError<NotificationID>: CloudKitErrorType {
 
-    public let underlyingError: NSError
+    public let underlyingError: Error
     public let marked: [NotificationID]?
 
-    init(error: NSError, marked: [NotificationID]?) {
+    init(error: Error, marked: [NotificationID]?) {
         self.underlyingError = error
         self.marked = marked
     }
@@ -559,11 +559,11 @@ extension CloudKitOperation where T: CKModifyBadgeOperationType {
 
 public struct FetchRecordChangesError<ServerChangeToken>: CloudKitErrorType {
 
-    public let underlyingError: NSError
+    public let underlyingError: Error
     public let token: ServerChangeToken?
     public let data: Data?
 
-    init(error: NSError, token: ServerChangeToken?, data: Data?) {
+    init(error: Error, token: ServerChangeToken?, data: Data?) {
         self.underlyingError = error
         self.token = token
         self.data = data
@@ -694,10 +694,10 @@ extension BatchedCloudKitOperation where T: CKFetchRecordChangesOperationType {
 
 public struct FetchRecordZonesError<RecordZone, RecordZoneID: Hashable>: CloudKitErrorType {
 
-    public let underlyingError: NSError
+    public let underlyingError: Error
     public let zonesByID: [RecordZoneID: RecordZone]?
 
-    init(error: NSError, zonesByID: [RecordZoneID: RecordZone]?) {
+    init(error: Error, zonesByID: [RecordZoneID: RecordZone]?) {
         self.underlyingError = error
         self.zonesByID = zonesByID
     }
@@ -752,10 +752,10 @@ extension CloudKitOperation where T: CKFetchRecordZonesOperationType {
 
 public struct FetchRecordsError<Record, RecordID: Hashable>: CloudKitErrorType {
 
-    public let underlyingError: NSError
+    public let underlyingError: Error
     public let recordsByID: [RecordID: Record]?
 
-    init(error: NSError, recordsByID: [RecordID: Record]?) {
+    init(error: Error, recordsByID: [RecordID: Record]?) {
         self.underlyingError = error
         self.recordsByID = recordsByID
     }
@@ -796,7 +796,7 @@ extension CloudKitOperation where T: CKFetchRecordsOperationType {
     public typealias FetchRecordsPerRecordProgressBlock = (T.RecordID, Double) -> Void
 
     /// A typealias for the block types used by CloudKitOperation<CKFetchRecordsOperation>
-    public typealias FetchRecordsPerRecordCompletionBlock = (T.Record?, T.RecordID?, NSError?) -> Void
+    public typealias FetchRecordsPerRecordCompletionBlock = (T.Record?, T.RecordID?, Error?) -> Void
 
     /// A typealias for the block types used by CloudKitOperation<CKFetchRecordsOperation>
     public typealias FetchRecordsCompletionBlock = ([T.RecordID: T.Record]?) -> Void
@@ -844,10 +844,10 @@ extension CloudKitOperation where T: CKFetchRecordsOperationType {
 
 public struct FetchSubscriptionsError<Subscription>: CloudKitErrorType {
 
-    public let underlyingError: NSError
+    public let underlyingError: Error
     public let subscriptionsByID: [String: Subscription]?
 
-    init(error: NSError, subscriptionsByID: [String: Subscription]?) {
+    init(error: Error, subscriptionsByID: [String: Subscription]?) {
         self.underlyingError = error
         self.subscriptionsByID = subscriptionsByID
     }
@@ -902,11 +902,11 @@ extension CloudKitOperation where T: CKFetchSubscriptionsOperationType {
 
 public struct ModifyRecordZonesError<RecordZone, RecordZoneID>: CloudKitErrorType, CloudKitBatchModifyErrorType {
 
-    public let underlyingError: NSError
+    public let underlyingError: Error
     public let saved: [RecordZone]?
     public let deleted: [RecordZoneID]?
 
-    init(error: NSError, saved: [RecordZone]?, deleted: [RecordZoneID]?) {
+    init(error: Error, saved: [RecordZone]?, deleted: [RecordZoneID]?) {
         self.underlyingError = error
         self.saved = saved
         self.deleted = deleted
@@ -976,11 +976,11 @@ extension CloudKitOperation where T: CKModifyRecordZonesOperationType {
 
 public struct ModifyRecordsError<Record, RecordID>: CloudKitErrorType, CloudKitBatchModifyErrorType {
 
-    public let underlyingError: NSError
+    public let underlyingError: Error
     public let saved: [Record]?
     public let deleted: [RecordID]?
 
-    init(error: NSError, saved: [Record]?, deleted: [RecordID]?) {
+    init(error: Error, saved: [Record]?, deleted: [RecordID]?) {
         self.underlyingError = error
         self.saved = saved
         self.deleted = deleted
@@ -1044,7 +1044,7 @@ extension CloudKitOperation where T: CKModifyRecordsOperationType {
     public typealias ModifyRecordsPerRecordProgressBlock = (T.Record, Double) -> Void
 
     /// A typealias for the block types used by CloudKitOperation<CKModifyRecordsOperation>
-    public typealias ModifyRecordsPerRecordCompletionBlock = (T.Record?, NSError?) -> Void
+    public typealias ModifyRecordsPerRecordCompletionBlock = (T.Record?, Error?) -> Void
 
     /// A typealias for the block types used by CloudKitOperation<CKModifyRecordsOperation>
     public typealias ModifyRecordsCompletionBlock = ([T.Record]?, [T.RecordID]?) -> Void
@@ -1128,11 +1128,11 @@ extension CloudKitOperation where T: CKModifyRecordsOperationType {
 
 public struct ModifySubscriptionsError<Subscription, SubscriptionID>: CloudKitErrorType, CloudKitBatchModifyErrorType {
 
-    public let underlyingError: NSError
+    public let underlyingError: Error
     public let saved: [Subscription]?
     public let deleted: [SubscriptionID]?
 
-    init(error: NSError, saved: [Subscription]?, deleted: [SubscriptionID]?) {
+    init(error: Error, saved: [Subscription]?, deleted: [SubscriptionID]?) {
         self.underlyingError = error
         self.saved = saved
         self.deleted = deleted
@@ -1202,10 +1202,10 @@ extension CloudKitOperation where T: CKModifySubscriptionsOperationType {
 
 public struct QueryError<QueryCursor>: CloudKitErrorType {
 
-    public let underlyingError: NSError
+    public let underlyingError: Error
     public let cursor: QueryCursor?
 
-    init(error: NSError, cursor: QueryCursor?) {
+    init(error: Error, cursor: QueryCursor?) {
         self.underlyingError = error
         self.cursor = cursor
     }

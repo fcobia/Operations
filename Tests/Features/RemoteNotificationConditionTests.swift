@@ -12,9 +12,9 @@ import XCTest
 class TestableRemoteNotificationRegistrar: RemoteNotificationRegistrarType {
 
     var didRegister = false
-    let error: NSError?
+    let error: Error?
 
-    init(error: NSError? = .none) {
+    init(error: Error? = .none) {
         self.error = error
     }
 
@@ -57,7 +57,7 @@ class RemoteNotificationConditionTests: OperationTests {
     }
 
     func test__condition_fails__when_registration_fails() {
-        registrar = TestableRemoteNotificationRegistrar(error: NSError(domain: "me.danthorpe.Operations", code: -10_001, userInfo: nil))
+        registrar = TestableRemoteNotificationRegistrar(error: Error(domain: "me.danthorpe.Operations", code: -10_001, userInfo: nil))
         condition.registrar = registrar
 
         let operation = TestOperation()

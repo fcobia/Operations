@@ -18,7 +18,7 @@ class TestableHealthRegistrar: NSObject {
     var allowedForSharing: Set<HKSampleType> = Set()
     var didCheckAuthorizationStatusForTypes: Set<HKObjectType>? = .none
 
-    var accessError: NSError? = .none
+    var accessError: Error? = .none
     var didRequestAccessForRequirement: HealthRequirement? = .none
 
     required override init() { }
@@ -49,7 +49,7 @@ extension TestableHealthRegistrar: HealthCapabilityRegistrarType {
         return .NotDetermined
     }
 
-    func opr_requestAuthorizationForRequirement(requirement: HealthRequirement, completion: (Bool, NSError?) -> Void) {
+    func opr_requestAuthorizationForRequirement(requirement: HealthRequirement, completion: (Bool, Error?) -> Void) {
         didRequestAccessForRequirement = requirement
 
         if !requirement.share.isEmpty {

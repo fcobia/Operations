@@ -19,8 +19,8 @@ import Foundation
 */
 public class ReachableOperation<T: Operation>: ComposedOperation<T> {
 
-    private var token: String? = .none
-    private var status: Reachability.NetworkStatus? = .none
+    fileprivate var token: String? = .none
+    fileprivate var status: Reachability.NetworkStatus? = .none
 
     /// The required connectivity kind.
     public let connectivity: Reachability.Connectivity
