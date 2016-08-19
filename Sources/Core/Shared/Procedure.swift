@@ -105,7 +105,7 @@ open class Procedure: Operation {
     fileprivate var _cancelled = false  // should always be set by .cancel()
 
     /// Access the internal errors collected by the Procedure
-    public var errors: [Error] {
+    open var errors: [Error] {
         return stateLock.withCriticalScope { _internalErrors }
     }
 
@@ -118,7 +118,7 @@ open class Procedure: Operation {
      - requires: self must not have started yet. i.e. either hasn't been added
      to a queue, or is waiting on dependencies.
      */
-    public var userIntent: UserIntent = .none {
+    open var userIntent: UserIntent = .none {
         didSet {
             setQualityOfServiceFromUserIntent(userIntent)
         }
@@ -133,7 +133,7 @@ open class Procedure: Operation {
      - returns: a Bool indicating whether or not the quality of service is .UserInitiated
     */
     @available(*, unavailable, message: "This property has been deprecated in favor of userIntent.")
-    public var userInitiated: Bool {
+    open var userInitiated: Bool {
         get {
             return qualityOfService == .userInitiated
         }
@@ -177,7 +177,7 @@ open class Procedure: Operation {
      ```
 
     */
-    public var log: LoggerType {
+    open var log: LoggerType {
         get {
             let operationName = self.operationName
             return _log.read { _LoggerOperationContext(parentLogger: $0, operationName: operationName) }
@@ -250,7 +250,7 @@ open class Procedure: Operation {
      */
     @available(iOS, deprecated: 8, message: "Refactor OperationCondition types as Condition subclasses.")
     @available(OSX, deprecated: 10.10, message: "Refactor OperationCondition types as Condition subclasses.")
-    public func addCondition(_ condition: OperationCondition) {
+    open func addCondition(_ condition: OperationCondition) {
         assert(state < .executing, "Cannot modify conditions after operation has begun executing, current state: \(state).")
         let operation = WrappedOperationCondition(condition)
         if let dependency = condition.dependencyForOperation(self) {
@@ -259,7 +259,7 @@ open class Procedure: Operation {
         conditions.insert(operation)
     }
 
-    public func addCondition(_ condition: Condition) {
+    open func addCondition(_ condition: Condition) {
         assert(state < .executing, "Cannot modify conditions after operation has begun executing, current state: \(state).")
         conditions.insert(condition)
     }
@@ -274,7 +274,7 @@ open class Procedure: Operation {
      to a queue, or is waiting on dependencies.
      - parameter observer: type conforming to protocol `OperationObserverType`.
      */
-    public func addObserver(_ observer: OperationObserverType) {
+    open func addObserver(_ observer: OperationObserverType) {
 
         observers.append(observer)
 
@@ -287,7 +287,7 @@ open class Procedure: Operation {
      Subclasses should override this method to perform their specialized task.
      They must call a finish methods in order to complete.
      */
-    public func execute() {
+    open func execute() {
         print("\(type(of: self)) must override `execute()`.", terminator: "")
         finish()
     }
@@ -299,7 +299,7 @@ open class Procedure: Operation {
      - parameter errors: an array of `ErrorType`.
      */
     @available(*, unavailable, renamed: "operationDidFinish")
-    public func finished(_ errors: [Error]) {
+    open func finished(_ errors: [Error]) {
         operationDidFinish(errors)
     }
 
@@ -309,7 +309,7 @@ open class Procedure: Operation {
 
      - parameter errors: an array of `ErrorType`.
      */
-    public func operationWillFinish(_ errors: [Error]) { /* No op */ }
+    open func operationWillFinish(_ errors: [Error]) { /* No op */ }
 
     /**
      Subclasses may override `operationDidFinish(_:)` if they wish to
@@ -317,7 +317,7 @@ open class Procedure: Operation {
 
      - parameter errors: an array of `ErrorType`.
      */
-    public func operationDidFinish(_ errors: [Error]) { /* no op */ }
+    open func operationDidFinish(_ errors: [Error]) { /* no op */ }
 
     // MARK: - Cancellation
 
@@ -326,7 +326,7 @@ open class Procedure: Operation {
 
      - parameter error: an optional `ErrorType`.
      */
-    public func cancelWithError(_ error: Error? = .none) {
+    open func cancelWithError(_ error: Error? = .none) {
         cancelWithErrors(error.map { [$0] } ?? [])
     }
 
@@ -335,7 +335,7 @@ open class Procedure: Operation {
 
      - parameter errors: an `[ErrorType]` defaults to empty array.
      */
-    public func cancelWithErrors(_ errors: [Error] = []) {
+    open func cancelWithErrors(_ errors: [Error] = []) {
         stateLock.withCriticalScope {
             if !errors.isEmpty {
                 log.warning("Did cancel with errors: \(errors).")
@@ -351,7 +351,7 @@ open class Procedure: Operation {
 
      - parameter errors: an array of `ErrorType`.
      */
-    public func operationWillCancel(_ errors: [Error]) { /* No op */ }
+    open func operationWillCancel(_ errors: [Error]) { /* No op */ }
 
     /**
      Subclasses may override `operationDidCancel(_:)` if they wish to
@@ -359,7 +359,7 @@ open class Procedure: Operation {
 
      - parameter errors: an array of `ErrorType`.
      */
-    public func operationDidCancel() { /* No op */ }
+    open func operationDidCancel() { /* No op */ }
 
     public final override func cancel() {
         let willCancel = stateLock.withCriticalScope { _ -> Bool in
@@ -812,7 +812,7 @@ extension Operation {
 
     - parameter block: a Void -> Void block
     */
-    public func addCompletionBlock(_ block: @escaping (Void) -> Void) {
+    open func addCompletionBlock(_ block: @escaping (Void) -> Void) {
         if let existing = completionBlock {
             completionBlock = {
                 existing()
@@ -830,7 +830,7 @@ extension Operation {
 
     - parameter dependencies: and array of `NSOperation` instances.
     */
-    public func addDependencies<S>(_ dependencies: S) where S: Sequence, S.Iterator.Element: Operation {
+    open func addDependencies<S>(_ dependencies: S) where S: Sequence, S.Iterator.Element: Operation {
         precondition(!isExecuting && !isFinished, "Cannot modify the dependencies after the operation has started executing.")
         dependencies.forEach(addDependency)
     }
@@ -841,13 +841,13 @@ extension Operation {
 
      - parameter dependencies: and array of `NSOperation` instances.
      */
-    public func removeDependencies<S>(_ dependencies: S) where S: Sequence, S.Iterator.Element: Operation {
+    open func removeDependencies<S>(_ dependencies: S) where S: Sequence, S.Iterator.Element: Operation {
         precondition(!isExecuting && !isFinished, "Cannot modify the dependencies after the operation has started executing.")
         dependencies.forEach(removeDependency)
     }
 
     /// Removes all the depdendencies from the operation.
-    public func removeDependencies() {
+    open func removeDependencies() {
         removeDependencies(dependencies)
     }
 
