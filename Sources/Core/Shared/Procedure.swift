@@ -24,7 +24,7 @@ Procedure builds on `NSOperation` in a few simple ways.
 to be notified of lifecycle events in the operation.
 
 */
-public class Procedure: Operation {
+open class Procedure: Operation {
 
     fileprivate enum State: Int, Comparable {
 

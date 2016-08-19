@@ -42,7 +42,7 @@ class TestableAddressBookRegistrar: AddressBookPermissionRegistrar {
         return (.none, AddressBookPermissionRegistrarError.addressBookUnknownErrorOccured)
     }
 
-    func requestAccessToAddressBook(_ addressBook: ABAddressBook, completion: (AddressBookPermissionRegistrarError?) -> Void) {
+    func requestAccessToAddressBook(_ addressBook: ABAddressBook, completion: @escaping (AddressBookPermissionRegistrarError?) -> Void) {
         didRequestAccess = true
         if requestShouldSucceed {
             status = .authorized
@@ -99,7 +99,7 @@ class AddressBookOperationTests: OperationTests {
     func test__given_authorization_denied__access_fails() {
         var didStart = false
         var didSucceed = false
-        var receivedErrors = [ErrorProtocol]()
+        var receivedErrors = [Error]()
 
         registrar.status = .notDetermined
         registrar.requestShouldSucceed = false
@@ -171,7 +171,7 @@ class AddressBookConditionTests: OperationTests {
     func test__given_authorization_denied__condition_fails() {
         registrar.requestShouldSucceed = false
 
-        var receivedErrors = [ErrorProtocol]()
+        var receivedErrors = [Error]()
 
         let operation = TestOperation()
         operation.addCondition(condition)

@@ -10,13 +10,13 @@ import XCTest
 @testable import Operations
 
 class TestableNetworkActivityIndicator: NetworkActivityIndicatorInterface {
-    typealias IndicatorVisibilityDidChange = (visibility: Bool) -> Void
+    typealias IndicatorVisibilityDidChange = (_ visibility: Bool) -> Void
 
     let visibilityDidChange: IndicatorVisibilityDidChange
 
     var networkActivityIndicatorVisible: Bool = false {
         didSet {
-            visibilityDidChange(visibility: networkActivityIndicatorVisible)
+            visibilityDidChange(networkActivityIndicatorVisible)
         }
     }
 
@@ -66,7 +66,7 @@ class NetworkObserverTests: OperationTests {
 
         operation.addCompletionBlock {
             let after = DispatchTime.now() + 1.5
-            Queue.main.queue.after(when: after) {
+            Queue.main.queue.asyncAfter(deadline: after) {
                 expectation.fulfill()
             }
         }
@@ -115,14 +115,14 @@ class NetworkObserverTests: OperationTests {
         let expectation1 = expectation(description: "Test: \(#function)")
         operation1.addCompletionBlock {
             let after = DispatchTime.now() + 1.5
-            Queue.main.queue.after(when: after) {
+            Queue.main.queue.asyncAfter(deadline: after) {
                 expectation1.fulfill()
             }
         }
         let expectation2 = expectation(description: "Test: \(#function)")
         operation2.addCompletionBlock {
             let after = DispatchTime.now() + 1.5
-            Queue.main.queue.after(when: after) {
+            Queue.main.queue.asyncAfter(deadline: after) {
                 expectation2.fulfill()
             }
         }

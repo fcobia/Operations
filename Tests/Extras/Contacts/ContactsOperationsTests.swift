@@ -69,7 +69,7 @@ class TestableContactSaveRequest: ContactSaveRequestType {
 @available(iOS 9.0, OSX 10.11, *)
 class TestableContactsStore: ContactStoreType {
 
-    enum Error: ErrorProtocol {
+    enum TestableContactsStoreError: Swift.Error {
         case notImplemented
     }
 

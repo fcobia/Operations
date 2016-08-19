@@ -16,7 +16,7 @@ class NegatedConditionTests: OperationTests {
         let operation = TestOperation()
         operation.addCondition(NegatedCondition(TrueCondition()))
 
-        var receivedErrors = [ErrorProtocol]()
+        var receivedErrors = [Error]()
         operation.addObserver(DidFinishObserver { _, errors in
             receivedErrors = errors
             expectation.fulfill()

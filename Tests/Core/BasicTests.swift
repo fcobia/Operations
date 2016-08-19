@@ -223,7 +223,7 @@ class OperationDependencyTests: OperationTests {
             let op1 = BlockProcedure { (continuation: BlockProcedure.ContinuationBlockType) in
                 counter1 += 1
                 op1Expectation.fulfill()
-                continuation(error: nil)
+                continuation(nil)
             }
 
             let op2name = "Procedure 2, iteration: \(i)"
@@ -231,7 +231,7 @@ class OperationDependencyTests: OperationTests {
             let op2 = BlockProcedure { (continuation: BlockProcedure.ContinuationBlockType) in
                 counter2 += 1
                 op2Expectation.fulfill()
-                continuation(error: nil)
+                continuation(nil)
             }
 
             let op3name = "Procedure 3, iteration: \(i)"
@@ -239,7 +239,7 @@ class OperationDependencyTests: OperationTests {
             let op3 = BlockProcedure { (continuation: BlockProcedure.ContinuationBlockType) in
                 counter3 += 1
                 op3Expectation.fulfill()
-                continuation(error: nil)
+                continuation(nil)
             }
 
             op2.addDependency(op1)
@@ -272,7 +272,7 @@ class DelayOperationTests: OperationTests {
         let operation = DelayOperation(interval: -9_000_000)
         runOperation(operation)
         let after = DispatchTime.now() + Double(Int64(0.05 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
-        (Queue.main.queue).after(when: after) {
+        (Queue.main.queue).asyncAfter(deadline: after) {
             expectation.fulfill()
         }
         waitForExpectations(timeout: 1, handler: nil)
@@ -284,7 +284,7 @@ class DelayOperationTests: OperationTests {
         let operation = DelayOperation(date: Date.distantPast)
         runOperation(operation)
         let after = DispatchTime.now() + Double(Int64(0.05 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
-        (Queue.main.queue).after(when: after) {
+        (Queue.main.queue).asyncAfter(deadline: after) {
             expectation.fulfill()
         }
         waitForExpectations(timeout: 1, handler: nil)
@@ -387,7 +387,7 @@ class CancellationOperationTests: OperationTests {
 
         waitForExpectations(timeout: delaySeconds - 1.0, handler: nil)
         XCTAssertFalse(operation.didExecute)
-        guard delayCompleteSignal.wait(timeout: .now() + 5) == .Success else {
+        guard delayCompleteSignal.wait(timeout: .now() + 5) == .success else {
             XCTFail("Delay operation did not complete")
             return
         }

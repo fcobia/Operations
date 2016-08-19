@@ -11,13 +11,13 @@ import XCTest
 
 class TestableUIApplication: BackgroundTaskApplicationInterface {
 
-    typealias DidBeginBackgroundTask = (name: String?, identifier: UIBackgroundTaskIdentifier) -> Void
-    typealias DidEndBackgroundTask = (identifier: UIBackgroundTaskIdentifier) -> Void
+    typealias DidBeginBackgroundTask = (_ name: String?, _ identifier: UIBackgroundTaskIdentifier) -> Void
+    typealias DidEndBackgroundTask = (_ identifier: UIBackgroundTaskIdentifier) -> Void
 
     var testableApplicationState: UIApplicationState?
     var didBeginBackgroundTask: DidBeginBackgroundTask?
     var didEndBackgroundTask: DidEndBackgroundTask?
-    let application = UIApplication.shared()
+    let application = UIApplication.shared
 
     init(state: UIApplicationState? = .none, didBeginTask: DidBeginBackgroundTask? = .none, didEndTask: DidEndBackgroundTask? = .none) {
         testableApplicationState = state
@@ -33,13 +33,13 @@ class TestableUIApplication: BackgroundTaskApplicationInterface {
 
     func beginBackgroundTaskWithName(_ taskName: String?, expirationHandler handler: (() -> Void)?) -> UIBackgroundTaskIdentifier {
         let identifier = application.beginBackgroundTask(withName: taskName, expirationHandler: handler)
-        didBeginBackgroundTask?(name: taskName, identifier: identifier)
+        didBeginBackgroundTask?(taskName, identifier)
         return identifier
     }
 
     func endBackgroundTask(_ identifier: UIBackgroundTaskIdentifier) {
         application.endBackgroundTask(identifier)
-        didEndBackgroundTask?(identifier: identifier)
+        didEndBackgroundTask?(identifier)
     }
 }
 

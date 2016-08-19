@@ -11,24 +11,24 @@ import XCTest
 @testable import Operations
 
 class TestablePresentingController: NSObject, PresentingViewController {
-    typealias CheckBlockType = (received: UIViewController) -> Void
+    typealias CheckBlockType = (_ received: UIViewController) -> Void
 
     var check: CheckBlockType? = .none
     var expectation: XCTestExpectation? = .none
 
-    func presentViewController(_ vc: UIViewController, animated: Bool, completion: (() -> Void)?) {
-        check?(received: vc)
+	func present(_ vc: UIViewController, animated flag: Bool, completion: (@escaping () -> Void)?) {
+        check?(vc)
         completion?()
         expectation?.fulfill()
     }
 
-    func showViewController(_ vc: UIViewController, sender: AnyObject?) {
-        check?(received: vc)
+	func show(_ vc: UIViewController, sender: Any?) {
+        check?(vc)
         expectation?.fulfill()
     }
 
-    func showDetailViewController(_ vc: UIViewController, sender: AnyObject?) {
-        check?(received: vc)
+	func showDetailViewController(_ vc: UIViewController, sender: Any?) {
+        check?(vc)
         expectation?.fulfill()
     }
 }

@@ -11,12 +11,12 @@ import XCTest
 
 class TestOperation: Procedure, ResultOperationType {
 
-    enum Error: ErrorProtocol {
+    enum TestOperationError: Swift.Error {
         case simulatedError
     }
 
     let numberOfSeconds: Double
-    let simulatedError: ErrorProtocol?
+    let simulatedError: Error?
     let producedOperation: Operation?
     var didExecute: Bool = false
     var result: String? = "Hello World"
@@ -26,7 +26,7 @@ class TestOperation: Procedure, ResultOperationType {
     var operationWillCancelCalled = false
     var operationDidCancelCalled = false
 
-    init(delay: Double = 0.0001, error: ErrorProtocol? = .none, produced: Operation? = .none) {
+    internal init(delay: Double = 0.0001, error: Error? = .none, produced: Operation? = .none) {
         numberOfSeconds = delay
         simulatedError = error
         producedOperation = produced
@@ -38,27 +38,27 @@ class TestOperation: Procedure, ResultOperationType {
 
         if let producedOperation = self.producedOperation {
             let after = DispatchTime.now() + Double(Int64(numberOfSeconds * Double(0.001) * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
-            (Queue.main.queue).after(when: after) {
+            (Queue.main.queue).asyncAfter(deadline: after) {
                 self.produceOperation(producedOperation)
             }
         }
 
         let after = DispatchTime.now() + Double(Int64(numberOfSeconds * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
-        (Queue.main.queue).after(when: after) {
+        (Queue.main.queue).asyncAfter(deadline: after) {
             self.didExecute = true
             self.finish(self.simulatedError)
         }
     }
 
-    override func operationWillFinish(_ errors: [ErrorProtocol]) {
+    override func operationWillFinish(_ errors: [Error]) {
         operationWillFinishCalled = true
     }
 
-    override func operationDidFinish(_ errors: [ErrorProtocol]) {
+    override func operationDidFinish(_ errors: [Error]) {
         operationDidFinishCalled = true
     }
 
-    override func operationWillCancel(_ errors: [ErrorProtocol]) {
+    override func operationWillCancel(_ errors: [Error]) {
         operationWillCancelCalled = true
     }
 
@@ -87,7 +87,7 @@ class TestConditionOperation: Operations.Condition {
 
     let evaluate: () throws -> Bool
 
-    init(dependencies: [Operation]? = .none, evaluate: () throws -> Bool) {
+    init(dependencies: [Operation]? = .none, evaluate: @escaping () throws -> Bool) {
         self.evaluate = evaluate
         super.init()
         if let dependencies = dependencies {
@@ -108,7 +108,7 @@ class TestConditionOperation: Operations.Condition {
 
 class TestQueueDelegate: OperationQueueDelegate {
 
-    typealias FinishBlockType = (Operation, [ErrorProtocol]) -> Void
+    typealias FinishBlockType = (Operation, [Error]) -> Void
 
     let willFinishOperation: FinishBlockType?
     let didFinishOperation: FinishBlockType?
@@ -128,13 +128,13 @@ class TestQueueDelegate: OperationQueueDelegate {
         did_willAddOperation = true
     }
 
-    func operationQueue(_ queue: ProcedureQueue, willFinishOperation operation: Operation, withErrors errors: [ErrorProtocol]) {
+    func operationQueue(_ queue: ProcedureQueue, willFinishOperation operation: Operation, withErrors errors: [Error]) {
         did_operationWillFinish = true
         did_numberOfErrorThatOperationDidFinish = errors.count
         willFinishOperation?(operation, errors)
     }
 
-    func operationQueue(_ queue: ProcedureQueue, didFinishOperation operation: Operation, withErrors errors: [ErrorProtocol]) {
+    func operationQueue(_ queue: ProcedureQueue, didFinishOperation operation: Operation, withErrors errors: [Error]) {
         did_operationDidFinish = true
         did_numberOfErrorThatOperationDidFinish = errors.count
         didFinishOperation?(operation, errors)
