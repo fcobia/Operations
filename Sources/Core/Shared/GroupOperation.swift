@@ -434,7 +434,7 @@ public struct WillAddChildObserver: GroupOperationWillAddChildObserver {
      - parameter willAddChild: the `WillAddChildObserver.BlockType`
      - returns: an observer.
      */
-    public init(willAddChild: BlockType) {
+    public init(willAddChild: @escaping BlockType) {
         self.block = willAddChild
     }
 

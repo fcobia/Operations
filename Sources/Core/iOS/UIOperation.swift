@@ -22,7 +22,7 @@ public protocol PresentingViewController: class {
     - parameter animated: a `Bool` flag to indicate whether the presentation should be animated.
     - parameter completion: a completion block which may be nil.
     */
-    func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (@escaping () -> Void)?)
+    func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
 
 
     @available(iOS 8.0, *)

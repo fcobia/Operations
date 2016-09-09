@@ -84,7 +84,7 @@ public class UserLocationOperation: Procedure, CLLocationManagerDelegate, Result
      - parameter accuracy: the location accuracy which defaults to 3km.
      - parameter completion: a closure CLLocation -> Void.
     */
-    public init(accuracy: CLLocationAccuracy = kCLLocationAccuracyThreeKilometers, completion: CompletionBlockType = { _ in }) {
+    public init(accuracy: CLLocationAccuracy = kCLLocationAccuracyThreeKilometers, completion: @escaping CompletionBlockType = { _ in }) {
         self.accuracy = accuracy
         self.completion = completion
         self.capability = Capability.Location(.whenInUse)
@@ -196,7 +196,7 @@ public class ReverseGeocodeOperation: Procedure, ResultOperationType {
     - parameter location: the location to reverse lookup.
     - parameter completion: a completion block of CompletionBlockType
     */
-    public init(location: CLLocation, completion: CompletionBlockType = { _ in }) {
+    public init(location: CLLocation, completion: @escaping CompletionBlockType = { _ in }) {
         self.location = location
         self.completion = completion
         super.init()
@@ -265,7 +265,7 @@ public class ReverseGeocodeUserLocationOperation: GroupOperation, ResultOperatio
     - parameter accuracy: the location accuracy.
     - parameter completion: a completion block of CompletionBlockType
     */
-    public init(accuracy: CLLocationAccuracy = kCLLocationAccuracyThreeKilometers, completion: CompletionBlockType = { _, _ in }) {
+    public init(accuracy: CLLocationAccuracy = kCLLocationAccuracyThreeKilometers, completion: @escaping CompletionBlockType = { _, _ in }) {
         self.completion = completion
         self.userLocationOperation = UserLocationOperation(accuracy: accuracy, completion: { _ in })
         super.init(operations: [ userLocationOperation ])

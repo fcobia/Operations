@@ -66,7 +66,7 @@ class RetryGenerator<T: Operation>: IteratorProtocol {
     internal var info: RetryFailureInfo<T>? = .none
     fileprivate var generator: AnyIterator<Payload>
 
-    init(generator: AnyIterator<Payload>, retry: Handler) {
+    init(generator: AnyIterator<Payload>, retry: @escaping Handler) {
         self.generator = generator
         self.retry = retry
     }
@@ -111,7 +111,7 @@ public class RetryOperation<T: Operation>: RepeatedOperation<T> {
      adjust the next delay and Procedure.
 
     */
-    public init(maxCount max: Int? = .none, generator: AnyIterator<Payload>, retry block: Handler) {
+    public init(maxCount max: Int? = .none, generator: AnyIterator<Payload>, retry block: @escaping Handler) {
         retry = RetryGenerator(generator: generator, retry: block)
         super.init(maxCount: max, generator: AnyIterator(retry))
         name = "Retry Procedure <\(T.self)>"
@@ -129,7 +129,7 @@ public class RetryOperation<T: Operation>: RepeatedOperation<T> {
      adjust the next delay and Procedure.
 
      */
-    public init<D, G>(maxCount max: Int? = .none, delay: D, generator: G, retry block: Handler) where D: IteratorProtocol, D.Element == Delay, G: IteratorProtocol, G.Element == T {
+    public init<D, G>(maxCount max: Int? = .none, delay: D, generator: G, retry block: @escaping Handler) where D: IteratorProtocol, D.Element == Delay, G: IteratorProtocol, G.Element == T {
         let tuple = TupleGenerator(primary: generator, secondary: delay)
         let mapped = MapGenerator(tuple) { RepeatedPayload(delay: $0.0, operation: $0.1, configure: .none) }
         retry = RetryGenerator(generator: AnyIterator(mapped), retry: block)
@@ -170,7 +170,7 @@ public class RetryOperation<T: Operation>: RepeatedOperation<T> {
      operation regardless of error info.
 
      */
-    public init<G>(maxCount max: Int? = 5, strategy: WaitStrategy = .fixed(0.1), _ generator: G, retry block: Handler = { $1 }) where G: IteratorProtocol, G.Element == T {
+    public init<G>(maxCount max: Int? = 5, strategy: WaitStrategy = .fixed(0.1), _ generator: G, retry block: @escaping Handler = { $1 }) where G: IteratorProtocol, G.Element == T {
         let delay = MapGenerator(strategy.generator()) { Delay.by($0) }
         let tuple = TupleGenerator(primary: generator, secondary: delay)
         let mapped = MapGenerator(tuple) { RepeatedPayload(delay: $0.0, operation: $0.1, configure: .none) }

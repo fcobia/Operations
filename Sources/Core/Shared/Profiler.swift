@@ -329,7 +329,7 @@ struct PrintableProfileResult: CustomStringConvertible {
 
 public class _OperationProfileLogger<Manager: LogManagerType>: _Logger<Manager>, OperationProfilerReporter {
 
-    public required init(severity: LogSeverity = Manager.severity, enabled: Bool = Manager.enabled, logger: LoggerBlockType = Manager.logger) {
+    public required init(severity: LogSeverity = Manager.severity, enabled: Bool = Manager.enabled, logger: @escaping LoggerBlockType = Manager.logger) {
         super.init(severity: severity, enabled: enabled, logger: logger)
     }
 

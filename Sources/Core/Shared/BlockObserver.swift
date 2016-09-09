@@ -28,7 +28,7 @@ public struct WillExecuteObserver: OperationWillExecuteObserver {
      - parameter didStart: the `DidStartBlock`
      - returns: an observer.
      */
-    public init(willExecute: BlockType) {
+    public init(willExecute: @escaping BlockType) {
         self.block = willExecute
     }
 
@@ -64,7 +64,7 @@ public struct WillCancelObserver: OperationWillCancelObserver {
      - parameter didStart: the `DidStartBlock`
      - returns: an observer.
      */
-    public init(willCancel: BlockType) {
+    public init(willCancel: @escaping BlockType) {
         self.block = willCancel
     }
 
@@ -98,7 +98,7 @@ public struct DidCancelObserver: OperationDidCancelObserver {
      - parameter didStart: the `DidStartBlock`
      - returns: an observer.
      */
-    public init(didCancel: BlockType) {
+    public init(didCancel: @escaping BlockType) {
         self.block = didCancel
     }
 
@@ -135,7 +135,7 @@ public struct ProducedOperationObserver: OperationDidProduceOperationObserver {
      - parameter didStart: the `DidStartBlock`
      - returns: an observer.
      */
-    public init(didProduce: BlockType) {
+    public init(didProduce: @escaping BlockType) {
         self.block = didProduce
     }
 
@@ -169,7 +169,7 @@ public struct WillFinishObserver: OperationWillFinishObserver {
      - parameter didStart: the `DidStartBlock`
      - returns: an observer.
      */
-    public init(willFinish: BlockType) {
+    public init(willFinish: @escaping BlockType) {
         self.block = willFinish
     }
 
@@ -203,7 +203,7 @@ public struct DidFinishObserver: OperationDidFinishObserver {
      - parameter didStart: the `DidStartBlock`
      - returns: an observer.
      */
-    public init(didFinish: BlockType) {
+    public init(didFinish: @escaping BlockType) {
         self.block = didFinish
     }
 

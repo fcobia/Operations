@@ -68,7 +68,7 @@ protocol SystemReachabilityType: ReachabilityManagerType {
 
 protocol HostReachabilityType: ReachabilityManagerType {
 
-    func reachabilityForURL(_ url: URL, completion: Reachability.ObserverBlockType)
+    func reachabilityForURL(_ url: URL, completion: @escaping Reachability.ObserverBlockType)
 }
 
 final class ReachabilityManager {
@@ -130,7 +130,7 @@ extension ReachabilityManager: SystemReachabilityType {
 
 extension ReachabilityManager: HostReachabilityType {
 
-    func reachabilityForURL(_ url: URL, completion: Reachability.ObserverBlockType) {
+    func reachabilityForURL(_ url: URL, completion: @escaping Reachability.ObserverBlockType) {
 
         queue.async { [reachabilityFlagsForHostname = network.reachabilityFlagsForHostname] in
             if let host = url.host, let flags = reachabilityFlagsForHostname(host) {

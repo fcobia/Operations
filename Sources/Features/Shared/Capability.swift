@@ -178,7 +178,7 @@ public class GetAuthorizationStatus<Capability: CapabilityType>: Procedure {
      - parameter capability: the Capability.
      - parameter completion: the Completion closure.
     */
-    public init(_ capability: Capability, completion: Completion = { _ in }) {
+    public init(_ capability: Capability, completion: @escaping Completion = { _ in }) {
         self.capability = capability
         self.completion = completion
         super.init()
@@ -219,7 +219,7 @@ public class Authorize<Capability: CapabilityType>: GetAuthorizationStatus<Capab
      - parameter capability: the Capability.
      - parameter completion: the Completion closure.
      */
-    public override init(_ capability: Capability, completion: Completion = { _ in }) {
+    public override init(_ capability: Capability, completion: @escaping Completion = { _ in }) {
         super.init(capability, completion: completion)
         name = "Authorize \(capability.name).\(capability.requirement)"
         addCondition(MutuallyExclusive<Capability>())

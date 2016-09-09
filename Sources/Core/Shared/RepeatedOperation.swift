@@ -342,7 +342,7 @@ public class RepeatedOperation<T>: GroupOperation where T: Operation {
 
      - parameter block: a block which receives an instance of T
     */
-    public func addConfigureBlock(_ block: Payload.ConfigureBlock) {
+    public func addConfigureBlock(_ block: @escaping Payload.ConfigureBlock) {
         let config = configure
         configure = { operation in
             config(operation)
@@ -355,7 +355,7 @@ public class RepeatedOperation<T>: GroupOperation where T: Operation {
 
      - parameter block: a block which receives an instance of T
      */
-    public func replaceConfigureBlock(_ block: Payload.ConfigureBlock) {
+    public func replaceConfigureBlock(_ block: @escaping Payload.ConfigureBlock) {
         configure = block
         log.verbose("did replace configure block.")
     }

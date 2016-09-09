@@ -18,7 +18,7 @@ argument to finish with the supplied error.
 public class BlockProcedure: Procedure {
 
     public typealias ContinuationBlockType = (_ error: Error?) -> Void
-    public typealias BlockType = (_ continueWithError: ContinuationBlockType) -> Void
+    public typealias BlockType = (_ continueWithError: @escaping ContinuationBlockType) -> Void
 
     fileprivate let block: BlockType
 
@@ -28,7 +28,7 @@ public class BlockProcedure: Procedure {
     - parameter block: The closure to run when the operation executes.
     If this block is nil, the operation will immediately finish.
     */
-    public required init(block: BlockType = { continuation in continuation(nil) }) {
+    public required init(block: @escaping BlockType = { continuation in continuation(nil) }) {
         self.block = block
         super.init()
         name = "BlockProcedure"

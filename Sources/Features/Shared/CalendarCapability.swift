@@ -29,7 +29,7 @@ public protocol EventsCapabilityRegistrarType: CapabilityRegistrarType {
      - parameter requirement: the EKEntityType, e.g. .Events, or .Reminders
      - parameter completion: a EKEventStoreRequestAccessCompletionHandler
     */
-    func opr_requestAccessForRequirement(_ requirement: EKEntityType, completion: EKEventStoreRequestAccessCompletionHandler)
+    func opr_requestAccessForRequirement(_ requirement: EKEntityType, completion: @escaping EKEventStoreRequestAccessCompletionHandler)
 }
 
 extension EKEventStore: EventsCapabilityRegistrarType {
@@ -50,7 +50,7 @@ extension EKEventStore: EventsCapabilityRegistrarType {
      - parameter requirement: the EKEntityType, e.g. .Events, or .Reminders
      - parameter completion: a EKEventStoreRequestAccessCompletionHandler
      */
-    public func opr_requestAccessForRequirement(_ requirement: EKEntityType, completion: EKEventStoreRequestAccessCompletionHandler) {
+    public func opr_requestAccessForRequirement(_ requirement: EKEntityType, completion: @escaping EKEventStoreRequestAccessCompletionHandler) {
         requestAccess(to: requirement, completion: completion)
     }
 }

@@ -64,7 +64,7 @@ public func == (lhs: ConditionError, rhs: ConditionError) -> Bool {
  */
 public class Condition: Procedure, ConditionType, ResultOperationType {
 	
-	public typealias CompletionBlockType = @escaping (ConditionResult) -> Void
+	public typealias CompletionBlockType = (ConditionResult) -> Void
 
     public var mutuallyExclusive: Bool = false
 
@@ -86,7 +86,7 @@ public class Condition: Procedure, ConditionType, ResultOperationType {
      - parameter operation: the Procedure instance the condition was attached to
      - parameter completion: a completion block which receives a ConditionResult argument.
     */
-    public func evaluate(_ operation: Procedure, completion: CompletionBlockType) {
+    public func evaluate(_ operation: Procedure, completion: @escaping CompletionBlockType) {
         assertionFailure("ConditionOperation must be subclassed, and \(#function) overridden.")
         completion(.failed(OperationError.conditionFailed))
     }
@@ -106,7 +106,7 @@ public class TrueCondition: Condition {
         self.mutuallyExclusive = mutuallyExclusive
     }
 
-    public override func evaluate(_ operation: Procedure, completion: CompletionBlockType) {
+    public override func evaluate(_ operation: Procedure, completion: @escaping CompletionBlockType) {
         completion(.satisfied)
     }
 }
@@ -119,7 +119,7 @@ public class FalseCondition: Condition {
         self.mutuallyExclusive = mutuallyExclusive
     }
 
-    public override func evaluate(_ operation: Procedure, completion: CompletionBlockType) {
+    public override func evaluate(_ operation: Procedure, completion: @escaping CompletionBlockType) {
         completion(.failed(ConditionError.falseCondition))
     }
 }
@@ -172,7 +172,7 @@ public class ComposedCondition<C: Condition>: Condition, AutomaticInjectionOpera
     }
 
     /// Override of public function
-    public override func evaluate(_ operation: Procedure, completion: CompletionBlockType) {
+    public override func evaluate(_ operation: Procedure, completion: @escaping CompletionBlockType) {
         guard let result = requirement else {
             completion(.failed(AutomaticInjectionError.requirementNotSatisfied))
             return
@@ -201,7 +201,7 @@ internal class WrappedOperationCondition: Condition {
         name = condition.name
     }
 
-	override func evaluate(_ operation: Procedure, completion: CompletionBlockType) {
+	override func evaluate(_ operation: Procedure, completion: @escaping CompletionBlockType) {
         condition.evaluateForOperation(operation, completion: completion)
     }
 }

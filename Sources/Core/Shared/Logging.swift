@@ -226,7 +226,7 @@ class _Logger<Manager: LogManagerType>: LoggerType {
      - parameter severity: a `LogSeverity`.
      - parameter enabled: a `Bool`.
     */
-    required init(severity: LogSeverity = Manager.severity, enabled: Bool = Manager.enabled, logger: LoggerBlockType = Manager.logger) {
+    required init(severity: LogSeverity = Manager.severity, enabled: Bool = Manager.enabled, logger: @escaping LoggerBlockType = Manager.logger) {
         self.severity = severity
         self.enabled = enabled
         self.logger = logger

@@ -37,7 +37,7 @@ public class AddressBookCondition: Condition {
         }
     }
 
-    public override func evaluate(_ operation: Procedure, completion: CompletionBlockType) {
+    public override func evaluate(_ operation: Procedure, completion: @escaping CompletionBlockType) {
         switch registrar.status {
         case .authorized:
             completion(.satisfied)

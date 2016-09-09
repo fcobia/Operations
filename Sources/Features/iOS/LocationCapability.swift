@@ -162,7 +162,7 @@ public class LocationCapability: NSObject, CLLocationManagerDelegate, Capability
      Request authorization to Location services from the Registrar.
      - parameter completion: a dispatch_block_t
      */
-    public func requestAuthorizationWithCompletion(_ completion: CapabilityCompletionType) {
+    public func requestAuthorizationWithCompletion(_ completion: @escaping CapabilityCompletionType) {
         guard isAvailable() else {
             completion()
             return

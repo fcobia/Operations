@@ -39,14 +39,14 @@ public class BlockCondition: Condition {
 
     - parameter block: a `ConditionBlockType`.
     */
-    public init(name: String = "Block Condition", mutuallyExclusive: Bool = false, block: ConditionBlockType) {
+    public init(name: String = "Block Condition", mutuallyExclusive: Bool = false, block: @escaping ConditionBlockType) {
         self.block = block
         super.init()
         self.mutuallyExclusive = mutuallyExclusive
         self.name = name
     }
 
-    public override func evaluate(_ operation: Procedure, completion: CompletionBlockType) {
+    public override func evaluate(_ operation: Procedure, completion: @escaping CompletionBlockType) {
         do {
             let result = try block()
             completion(result ? .satisfied : .failed(Error.blockConditionFailed))
